@@ -1,0 +1,29 @@
+This mod/plugin was developed by Chortos-2 on 9-24 August 2022.
+I can be contacted at:
+  * chortos@inbox.lv
+  * https://steamcommunity.com/id/astiob/
+  * https://chortos.selfip.net/~astiob/me#contact
+
+I have no affiliation to the original developers of the game, BepInEx,
+or Steam, nor to any of the copyright owners of the franchise.
+
+Official developers of the game are free and encouraged to incorporate
+my improvements back into the official game. No attribution or compensation
+is required, although I would be happy to receive some.
+
+
+-----------------------
+BSD Zero Clause License
+
+Copyright (c) 2022 Oleg Oshmyan (Chortos-2)
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+PERFORMANCE OF THIS SOFTWARE.
