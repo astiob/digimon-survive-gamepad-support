@@ -1,4 +1,4 @@
-This mod/plugin was developed by Chortos-2 on 9-24 August 2022.
+This mod/plugin was developed by Chortos-2 on 9-27 August 2022.
 I can be contacted at:
   * chortos@inbox.lv
   * https://steamcommunity.com/id/astiob/
@@ -13,7 +13,7 @@ is required, although I would be happy to receive some.
 
 
 -----------------------
-BSD Zero Clause License
+Zero-Clause BSD License
 
 Copyright (c) 2022 Oleg Oshmyan (Chortos-2)
 

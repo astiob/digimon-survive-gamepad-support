@@ -10,26 +10,30 @@ Prompts better match hardware.
 You can't screw up in-game gamepad settings.
 The game's choice of controller (if you have multiple) is improved.
 
-In particular:
+Specifically:
 
   * A Joy-Con pair is recognized as a Switch controller, and all controls
     work and have visible on-screen prompts with the official configuration.
 
-  * Steam Deck, mobile Steam Link: all controls work and have visible
-    on-screen prompts throughout the game with the official configuration,
-    and the on-screen prompts more closely match each controller's actual
-    hardware.
+  * Steam Deck, mobile Steam Link on-screen touch controls: all controls work
+    and have visible on-screen prompts throughout the game with the official
+    configuration, and the on-screen prompts more closely match each
+    controller's actual hardware.
 
   * PlayStation 3 controllers are recognized and work with the official
     configuration. On-screen prompts show the DualShock 4's buttons.
+
+  * Physical controllers attached to mobile devices running Steam Link are
+    recognized and work. On-screen prompts are styled as for the Xbox One
+    (because that's the default style).
 
   * A single Joy-Con is recognized and works with the official configuration,
     but because it lacks a ZL/ZR pair, it isn't enough to beat the game.
     As it also lacks a D-pad, text skipping and auto-advance is unavailable.
     On-screen prompts mostly match the Joy-Con's hardware layout
     (including plus or minus depending on which Joy-Con it is),
-    but SL/SR are shown as L/R in the tutorial & help,
-    and prompts for nonexistent controls are still displayed.
+    but some inconsistencies remain and prompts for nonexistent
+    controls are still displayed.
 
   * Other officially unsupported controller types and configurations
     should also have a better chance of working.
@@ -54,13 +58,15 @@ In particular:
     the right trackpad show "R" instead of "RS".
 
   * Controllers are prioritized by type:
-     1. mobile Steam Link (to override any controller attached to the computer);
-     2. explicitly supported controllers: Xbox, PlayStation, Steam Controller,
-        Switch Pro Controller, paired Joy-Con;
-     3. generic/unrecognized controllers;
-     4. Steam Deck (so that if a Deck has any
+     1. MFi/Android physical controllers via Steam Link;
+     2. mobile Steam Link on-screen touch controls
+        (to override any controller attached to the computer);
+     3. explicitly supported controllers: Xbox, PlayStation,
+        Steam Controller, Switch Pro Controller, paired Joy-Con;
+     4. generic/unrecognized controllers;
+     5. Steam Deck (so that if a Deck has any
         external controller attached, it takes over);
-     5. single Joy-Con (because it has too few controls).
+     6. single Joy-Con (because it has too few controls).
 
 Joy-Con support requires Steam client's 19 Aug 2022 update.
 
@@ -75,7 +81,8 @@ Installing
 
  2. Download BepInEx 5 x64 from https://github.com/BepInEx/BepInEx/releases
 
- 3. Unpack BepInEx into the game's folder, so that the folder looks like this:
+ 3. Copy/extract BepInEx into the game's folder,
+    so that the folder looks like this:
 
         BepInEx
         DigimonSurvive_Data
@@ -90,9 +97,15 @@ Installing
 
  4. Create a "plugins" folder inside the BepInEx folder.
 
- 5. Put GamepadSupportPlugin.dll in the plugins folder.
+ 5. Copy/extract GamepadSupportPlugin.dll into the plugins folder.
 
- 6. Simply start the game and enjoy.
+ 6. If you're using Linux/Proton (including Steam Deck), right-click Digimon
+    Survive in your Steam Library, select Properties -> General and put this
+    in Launch Options:
+
+        WINEDLLOVERRIDES="winhttp=n,b" %command%
+
+That's it. The mod will be active whenever you launch the game.
 
 
 Combining with other mods
