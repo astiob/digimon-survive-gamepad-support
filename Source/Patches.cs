@@ -10,6 +10,7 @@ using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
 using System.Text.RegularExpressions;
+using UnityEngine;
 using static GamePadDevice;
 
 namespace GamepadSupportPlugin
@@ -1221,6 +1222,21 @@ namespace GamepadSupportPlugin
 				}
 			}
 			//BepInEx.Logging.Logger.Sources.Remove(myLogSource);
+		}
+
+		[HarmonyPatch(typeof(GameInput2.KeyInput), "keyDown")]
+		[HarmonyPostfix]
+		static void KeyInput_keyDown_postfix()
+		{
+			Cursor.visible = false;
+		}
+
+		[HarmonyPatch(typeof(GameInput2), "UpdateMouse")]
+		[HarmonyPostfix]
+		static void UpdateMouse_postfix()
+		{
+			if (GameInput2.isMouseMove() || GameInput2.isTouchStart() || GameInput2.isTouchNow() || GameInput2.isTouchTap() || GameInput2.isMouseDownL() || GameInput2.isMouseNowL() || GameInput2.isMouseClickL() || GameInput2.isMouseDownR() || GameInput2.isMouseNowR() || GameInput2.isMouseClickR())
+				Cursor.visible = true;
 		}
 	}
 }
