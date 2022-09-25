@@ -4,9 +4,9 @@
     <Description>Improves gamepad support and fixes incorrect gamepad prompts.</Description>
     <TargetFramework>net461</TargetFramework>
     <Company>Chortos-2</Company>
-    <Copyright>0BSD. © Chortos-2, 9–27 Aug 2022</Copyright>
+    <Copyright>0BSD. © Chortos-2, 9 Aug to 25 Sep 2022</Copyright>
     <Product>Gamepad support BepInEx plugin for Digimon Survive</Product>
-    <Version>1.1.0.0</Version>
+    <Version>1.2.0.0</Version>
     <!--<DefineConstants>SILENT</DefineConstants>-->
   </PropertyGroup>
   <ItemGroup>

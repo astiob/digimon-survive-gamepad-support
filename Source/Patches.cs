@@ -55,7 +55,7 @@ namespace GamepadSupportPlugin
 			{ GameInput2.KeyType.GamePad_L3DI, "sw_button_09" },
 			{ GameInput2.KeyType.GamePad_R3DI, "sw_button_10" },
 		};
-		static readonly string[][] joyConDirectionInputTextureNames = new string[3][]
+		static readonly string[][] joyConDirectionInputTextureNames =
 		{
 			new string[3] { "xb_button_14", "xb_button_18", "xb_button_19" },
 			new string[3] { "sw_button_26", "sw_button_27", "sw_button_09" },
@@ -115,18 +115,8 @@ namespace GamepadSupportPlugin
 			{ GameInput2.KeyType.GamePad_Down, "ps_button_17" },
 			{ GameInput2.KeyType.GamePad_Left, "ps_button_18" },
 			{ GameInput2.KeyType.GamePad_Right, "ps_button_19" },
-			// I'd rather use PlayStation's sprites--"L" & "R" instead of "LS" & "RS"--
-			// because Steam Link's controller layout UI uses "LS" & "RS" for stick *clicks*.
-			// But tutorial & help text uses the "LS" sprite,
-			// and I don't want to add new text if I can avoid it.
-			//{ GameInput2.KeyType.GamePad_RStickUp, "xb_button_26" },
-			//{ GameInput2.KeyType.GamePad_RStickDown, "xb_button_27" },
-			//{ GameInput2.KeyType.GamePad_RStickLeft, "xb_button_28" },
-			//{ GameInput2.KeyType.GamePad_RStickRight, "xb_button_29" },
-			//{ GameInput2.KeyType.GamePad_LStickUp, "xb_button_20" },
-			//{ GameInput2.KeyType.GamePad_LStickDown, "xb_button_21" },
-			//{ GameInput2.KeyType.GamePad_LStickLeft, "xb_button_22" },
-			//{ GameInput2.KeyType.GamePad_LStickRight, "xb_button_23" },
+			// Use PlayStation's sprites (that is, "L" & "R" instead of "LS" & "RS")
+			// because the mobile app's control UI uses "LS" & "RS" for stick *clicks*.
 			{ GameInput2.KeyType.GamePad_RStickUp, "ps_button_28" },
 			{ GameInput2.KeyType.GamePad_RStickDown, "ps_button_29" },
 			{ GameInput2.KeyType.GamePad_RStickLeft, "ps_button_30" },
@@ -144,11 +134,9 @@ namespace GamepadSupportPlugin
 			{ GameInput2.KeyType.GamePad_L3DI, "xb_button_09" },
 			{ GameInput2.KeyType.GamePad_R3DI, "xb_button_10" },
 		};
-		static readonly string[][] mobileTouchDirectionInputTextureNames = new string[3][]
+		static readonly string[][] mobileTouchDirectionInputTextureNames =
 		{
 			new string[3] { "ps_button_14", "ps_button_20", "ps_button_21" },
-			//new string[3] { "xb_button_24", "xb_button_25", "xb_button_09" },
-			//new string[3] { "xb_button_30", "xb_button_31", "xb_button_10" },
 			new string[3] { "ps_button_26", "ps_button_27", "ps_button_09" },
 			new string[3] { "ps_button_32", "ps_button_33", "ps_button_10" },
 		};
@@ -206,7 +194,7 @@ namespace GamepadSupportPlugin
 			{ GameInput2.KeyType.GamePad_L3DI, "ps_button_15" },
 			{ GameInput2.KeyType.GamePad_R3DI, "ps_button_16" },
 		};
-		static readonly string[][] steamDeckDirectionInputTextureNames = new string[3][]
+		static readonly string[][] steamDeckDirectionInputTextureNames =
 		{
 			new string[3] { "xb_button_14", "xb_button_18", "xb_button_19" },
 			new string[3] { "ps_button_26", "ps_button_27", "ps_button_09" },
@@ -288,7 +276,7 @@ namespace GamepadSupportPlugin
 			//{ GameInput2.KeyType.NpadButton_StickLRight, "ps_button_25" },
 			//{ GameInput2.KeyType.NpadButton_StickL, "ps_button_15" },
 		};
-		static readonly string[][] steamControllerDirectionInputTextureNames = new string[3][]
+		static readonly string[][] steamControllerDirectionInputTextureNames =
 		{
 			new string[3] { "xb_button_14", "xb_button_18", "xb_button_19" },
 			new string[3] { "xb_button_24", "xb_button_25", "xb_button_09" },
@@ -520,7 +508,10 @@ namespace GamepadSupportPlugin
 			ref string[][][] ___directionInputTetureNames,
 			Dictionary<GameInput2.KeyType, string> ___steamSwitchTextureNameMap)
 		{
-			var builder = new StringBuilder($"Changing GetTextureNameMapIndex result from {__result} to ");
+#if DEBUG
+			var resultBeforePatch = __result;
+#endif
+
 			switch (GameInput2.GetGamePadType())
 			{
 				case GamePadDeviceType.SWITCH:
@@ -545,24 +536,12 @@ namespace GamepadSupportPlugin
 					__result = EnsureSteamDeckTextureNameMapIndex(ref ___gamePadTextureNameMap, ref ___directionInputTetureNames);
 					break;
 			}
-			builder.Append(__result);
 
 #if DEBUG
 			var myLogSource = BepInEx.Logging.Logger.CreateLogSource("SteamInput");
-			myLogSource.LogInfo(builder.ToString());
+			myLogSource.LogInfo($"Changing GetTextureNameMapIndex result from {resultBeforePatch} to {__result}");
 			BepInEx.Logging.Logger.Sources.Remove(myLogSource);
 #endif
-		}
-
-		enum GamePadDevicePriority
-		{
-			MOBILE_PHYSICAL,
-			MOBILE_TOUCH,
-			EXPLICITLY_SUPPORTED,
-			GENERIC,
-			STEAM_DECK,
-			SINGLE_JOY_CON,
-			NONE,
 		}
 
 #if !SILENT
@@ -570,6 +549,7 @@ namespace GamepadSupportPlugin
 		{
 			public int connectedControllers;
 			public ESteamInputType[] inputTypes;
+			public uint[] remotePlaySessionIds;
 			public EInputActionOrigin[,,] actionOrigins;
 
 			public override bool Equals(object obj)
@@ -582,6 +562,7 @@ namespace GamepadSupportPlugin
 				return other != null
 					&& connectedControllers == other.connectedControllers
 					&& inputTypes.SequenceEqual(other.inputTypes)
+					&& remotePlaySessionIds.SequenceEqual(other.remotePlaySessionIds)
 					&& actionOrigins.Cast<EInputActionOrigin>().SequenceEqual(other.actionOrigins.Cast<EInputActionOrigin>());
 			}
 
@@ -591,6 +572,8 @@ namespace GamepadSupportPlugin
 				hashCode.Add(connectedControllers);
 				foreach (var inputType in inputTypes)
 					hashCode.Add(inputType);
+				foreach (var remotePlaySessionId in remotePlaySessionIds)
+					hashCode.Add(remotePlaySessionId);
 				foreach (var actionOrigin in actionOrigins)
 					hashCode.Add(actionOrigin);
 				return hashCode.ToHashCode();
@@ -599,6 +582,15 @@ namespace GamepadSupportPlugin
 
 		static GamePadConfigurationSnapshot lastGamePadConfiguration = null;
 #endif
+
+		enum GamePadDevicePriority
+		{
+			EXPLICITLY_SUPPORTED,
+			GENERIC,
+			BUILTIN_HARDWARE,
+			SINGLE_JOY_CON,
+			NONE,
+		}
 
 		[HarmonyPatch(typeof(SteamGamePad), "CheckGamePadType")]
 		[HarmonyPrefix]
@@ -621,10 +613,12 @@ namespace GamepadSupportPlugin
 			{
 				connectedControllers = connectedControllers,
 				inputTypes = new ESteamInputType[connectedControllers],
+				remotePlaySessionIds = new uint[connectedControllers],
 				actionOrigins = new EInputActionOrigin[connectedControllers, ___ActionHandleNames.Length, Constants.STEAM_INPUT_MAX_ORIGINS],
 			};
 #endif
 
+			bool foundRemote = false;
 			GamePadDevicePriority foundPriority = GamePadDevicePriority.NONE;
 			InputHandle_t foundInputHandle = default(InputHandle_t);
 			___gamePadType = GamePadDeviceType.NONE;
@@ -635,8 +629,11 @@ namespace GamepadSupportPlugin
 
 				var inputHandle = ___controllerHandles[i];
 				var inputType = (ESteamInputType)SteamInput.GetInputTypeForHandle(inputHandle);
+				var remotePlaySessionId = SteamInput.GetRemotePlaySessionID(inputHandle);
+				bool isRemote = remotePlaySessionId != 0;
 #if !SILENT
 				gamePadConfiguration.inputTypes[i] = inputType;
+				gamePadConfiguration.remotePlaySessionIds[i] = remotePlaySessionId;
 #endif
 				switch (inputType)
 				{
@@ -655,11 +652,11 @@ namespace GamepadSupportPlugin
 						gamePadDeviceType = GamePadDeviceType.PS4;
 						priority = GamePadDevicePriority.EXPLICITLY_SUPPORTED;
 						break;
-					case ESteamInputType.k_ESteamInputType_AppleMFiController:
-					case ESteamInputType.k_ESteamInputType_AndroidController:
-						gamePadDeviceType = GamePadDeviceType.XBOX;
-						priority = GamePadDevicePriority.MOBILE_PHYSICAL;
-						break;
+					//case ESteamInputType.k_ESteamInputType_AppleMFiController:
+					//case ESteamInputType.k_ESteamInputType_AndroidController:
+					//	gamePadDeviceType = GamePadDeviceType.XBOX;
+					//	priority = LocalGamePadDevicePriority.MOBILE_PHYSICAL;
+					//	break;
 					case ESteamInputType.k_ESteamInputType_SwitchJoyConPair:
 					case ESteamInputType.k_ESteamInputType_SwitchProController:
 						gamePadDeviceType = GamePadDeviceType.SWITCH;
@@ -671,11 +668,11 @@ namespace GamepadSupportPlugin
 						break;
 					case ESteamInputType.k_ESteamInputType_MobileTouch:
 						gamePadDeviceType = MobileTouchGamePadDeviceType;
-						priority = GamePadDevicePriority.MOBILE_TOUCH;
+						priority = GamePadDevicePriority.BUILTIN_HARDWARE;
 						break;
 					case ESteamInputType.k_ESteamInputType_SteamDeckController:
 						gamePadDeviceType = SteamDeckGamePadDeviceType;
-						priority = GamePadDevicePriority.STEAM_DECK;
+						priority = GamePadDevicePriority.BUILTIN_HARDWARE;
 						break;
 					default:
 						gamePadDeviceType = GamePadDeviceType.XBOX;
@@ -725,7 +722,7 @@ namespace GamepadSupportPlugin
 							if (origin >= EInputActionOrigin.k_EInputActionOrigin_SteamDeck_A && origin <= EInputActionOrigin.k_EInputActionOrigin_SteamDeck_Reserved20)
 							{
 								gamePadDeviceType = SteamDeckGamePadDeviceType;
-								priority = GamePadDevicePriority.STEAM_DECK;
+								priority = GamePadDevicePriority.BUILTIN_HARDWARE;
 #if SILENT
 								goto actionHandlesInspected;
 #endif
@@ -749,13 +746,14 @@ namespace GamepadSupportPlugin
 				;
 #endif
 
-				if (priority < foundPriority)
+				if (isRemote && !foundRemote || isRemote == foundRemote && priority < foundPriority)
 				{
 					___gamePadType = gamePadDeviceType;
 					foundInputHandle = inputHandle;
+					foundRemote = isRemote;
 					foundPriority = priority;
 #if SILENT
-					if (priority == GamePadDevicePriority.EXPLICITLY_SUPPORTED)
+					if (isRemote && priority == GamePadDevicePriority.EXPLICITLY_SUPPORTED)
 						break;
 #endif
 				}
@@ -787,7 +785,8 @@ namespace GamepadSupportPlugin
 				logger.LogInfo($"{connectedControllers} controller{(connectedControllers == 1 ? " is" : "s are")} connected.");
 				for (int i = 0; i < connectedControllers; i++)
 				{
-					logger.LogInfo($"Controller #{i} ({___controllerHandles[i]}) of type {gamePadConfiguration.inputTypes[i]}:");
+					var remotePlaySessionId = gamePadConfiguration.remotePlaySessionIds[i];
+					logger.LogInfo($"Controller #{i} ({___controllerHandles[i]}) of type {gamePadConfiguration.inputTypes[i]} ({(remotePlaySessionId == 0 ? "local" : $"remote session {remotePlaySessionId}")}):");
 					for (int j = 0; j < ___ActionHandleNames.Length; j++)
 					{
 						var n = Constants.STEAM_INPUT_MAX_ORIGINS;
@@ -798,8 +797,16 @@ namespace GamepadSupportPlugin
 							builder.Append('s');
 						for (int k = 0; k < n; k++)
 						{
+							var origin = gamePadConfiguration.actionOrigins[i, j, k];
 							builder.Append(k == 0 ? ": " : ", ");
-							builder.Append(gamePadConfiguration.actionOrigins[i, j, k]);
+							if (origin < EInputActionOrigin.k_EInputActionOrigin_Count)
+								builder.Append(origin);
+							else
+							{
+								builder.Append((int)origin);
+								builder.Append(" ~= ");
+								builder.Append((EInputActionOrigin)SteamInput.TranslateActionOrigin(Steamworks.ESteamInputType.k_ESteamInputType_Unknown, (Steamworks.EInputActionOrigin)origin));
+							}
 						}
 						logger.LogInfo(builder.ToString());
 					}
@@ -807,6 +814,53 @@ namespace GamepadSupportPlugin
 			}
 #endif
 
+			return false;
+		}
+
+		static Steamworks.ESteamInputType BestSteamInputType
+		{
+			get
+			{
+				switch (GameInput2.GetGamePadType())
+				{
+					case GamePadDeviceType.PS4:
+						return Steamworks.ESteamInputType.k_ESteamInputType_PS4Controller;
+					case GamePadDeviceType.XBOX:
+						return Steamworks.ESteamInputType.k_ESteamInputType_XBoxOneController;
+					case GamePadDeviceType.SWITCH:
+						return Steamworks.ESteamInputType.k_ESteamInputType_SwitchProController;
+					case GamePadDeviceType.STEAM:
+						return Steamworks.ESteamInputType.k_ESteamInputType_SteamController;
+					case JoyConGamePadDeviceType:
+						return Steamworks.ESteamInputType.k_ESteamInputType_SwitchJoyConSingle;
+					case MobileTouchGamePadDeviceType:
+						return Steamworks.ESteamInputType.k_ESteamInputType_MobileTouch;
+					case SteamDeckGamePadDeviceType:
+						return (Steamworks.ESteamInputType)ESteamInputType.k_ESteamInputType_SteamDeckController;
+					default:
+						return Steamworks.ESteamInputType.k_ESteamInputType_Unknown;
+				}
+			}
+		}
+
+		static bool TryMapInputActionOrigin(
+			Dictionary<Steamworks.EInputActionOrigin, GameInput2.KeyType[]> eInputActionOriginToKeyInputMap,
+			Steamworks.EInputActionOrigin[] eInputActionOrigins,
+			int n,
+			out GameInput2.KeyType[] keyTypes)
+		{
+			GameInput2.KeyType[] value = null;
+			if (eInputActionOrigins.Take(n).Any(origin => eInputActionOriginToKeyInputMap.TryGetValue(origin, out value)) ||
+				eInputActionOrigins.Take(n).Any(origin => eInputActionOriginToKeyInputMap.TryGetValue(
+					SteamInput.TranslateActionOrigin(BestSteamInputType, origin), out value)) ||
+				eInputActionOrigins.Take(n).Any(origin => eInputActionOriginToKeyInputMap.TryGetValue(
+					SteamInput.TranslateActionOrigin(Steamworks.ESteamInputType.k_ESteamInputType_Unknown, origin), out value)))
+			{
+				keyTypes = value;
+				return true;
+			}
+
+			keyTypes = null;
 			return false;
 		}
 
@@ -837,15 +891,9 @@ namespace GamepadSupportPlugin
 			if (n != 0)
 			{
 				var eInputActionOriginToKeyInputMap = (Dictionary<Steamworks.EInputActionOrigin, GameInput2.KeyType[]>)AccessTools.Field(typeof(SteamGamePad), "eInputActionOriginToKeyInputMap").GetValue(null);
-				for (int i = 0; i < n; i++)
-				{
-					var origin = eInputActionOrigins[i];
-					if (eInputActionOriginToKeyInputMap.TryGetValue(origin, out var value))
-					{
-						___keyTypes[0] = value[0];
-						break;
-					}
-				}
+				// Patch 3: handle newer origins
+				if (TryMapInputActionOrigin(eInputActionOriginToKeyInputMap, eInputActionOrigins, n, out var value))
+					___keyTypes[0] = value[0];
 			}
 
 			return false;
@@ -877,19 +925,17 @@ namespace GamepadSupportPlugin
 			for (int i = 0; i < ___keyTypes.Length; i++)
 				___keyTypes[i] = (GameInput2.KeyType)(-1);
 
+			// Patch 1: check *all* origins to see if
+			// we recognize any, not just the first one.
 			int n = SteamInput.GetAnalogActionOrigins(inputHandle_t, actionSetHandle, ___m_actionHandle_t, eInputActionOrigins);
 			if (n != 0)
 			{
 				var eInputActionOriginToKeyInputMap = (Dictionary<Steamworks.EInputActionOrigin, GameInput2.KeyType[]>)AccessTools.Field(typeof(SteamGamePad), "eInputActionOriginToKeyInputMap").GetValue(null);
-				for (int i = 0; i < n; i++)
+				// Patch 2: handle newer origins
+				if (TryMapInputActionOrigin(eInputActionOriginToKeyInputMap, eInputActionOrigins, n, out var value))
 				{
-					var origin = eInputActionOrigins[i];
-					if (eInputActionOriginToKeyInputMap.TryGetValue(origin, out var value))
-					{
-						for (int j = 0; j < ___keyTypes.Length; j++)
-							___keyTypes[j] = value[j];
-						break;
-					}
+					for (int j = 0; j < ___keyTypes.Length; j++)
+						___keyTypes[j] = value[j];
 				}
 			}
 

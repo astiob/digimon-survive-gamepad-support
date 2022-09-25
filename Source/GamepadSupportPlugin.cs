@@ -32,6 +32,6 @@ namespace GamepadSupportPlugin
 
 		public const string pluginGuid = "mods.digimonsurvive.gamepad";
 		public const string pluginName = "GamepadSupport";
-		public const string pluginVersion = "1.1.0.0";
+		public const string pluginVersion = "1.2.0.0";
 	}
 }
