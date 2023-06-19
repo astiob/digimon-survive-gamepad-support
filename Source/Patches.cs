@@ -1407,5 +1407,29 @@ namespace GamepadSupportPlugin
 			if (GameInput2.isMouseMove() || GameInput2.isTouchStart() || GameInput2.isTouchNow() || GameInput2.isTouchTap() || GameInput2.isMouseDownL() || GameInput2.isMouseNowL() || GameInput2.isMouseClickL() || GameInput2.isMouseDownR() || GameInput2.isMouseNowR() || GameInput2.isMouseClickR())
 				Cursor.visible = true;
 		}
+
+		[HarmonyPatch(typeof(GameKeybordDevice), "GetInputTypeFromDefaultQWERTYKeyType")]
+		[HarmonyPrefix]
+		static bool GetInputTypeFromDefaultQWERTYKeyType_prefix(ref InputType __result, KeyType keyType)
+		{
+			if (GameKeybordDevice.IrrevocableKeyTypes.Contains(keyType))
+			{
+				__result = (InputType)~(int)keyType;
+				return false;
+			}
+			return true;
+		}
+
+		[HarmonyPatch(typeof(GameInput2), "GetKeyboardKeyType", new Type[] { typeof(InputType) })]
+		[HarmonyPrefix]
+		static bool GetKeyboardKeyType_prefix(ref KeyType __result, InputType type)
+		{
+			if ((int)type < 0)
+			{
+				__result = (KeyType)~(int)type;
+				return false;
+			}
+			return true;
+		}
 	}
 }
