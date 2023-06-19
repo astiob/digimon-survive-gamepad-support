@@ -86,6 +86,24 @@ namespace GamepadSupportPlugin
 			{ "<sprite index=29>", "<sprite index=17>" },
 			{ "<sprite index=41>", "<sprite index=17>" },
 		};
+		static readonly Dictionary<KeyType, string> steamSteamControllerSkinNameMap = new Dictionary<KeyType, string>
+		{
+			{ KeyType.GamePad_A, "xbox_A" },
+			{ KeyType.GamePad_B, "xbox_B" },
+			{ KeyType.GamePad_X, "xbox_X" },
+			{ KeyType.GamePad_Y, "xbox_Y" },
+			{ KeyType.GamePad_L1, "xbox_Lb" },
+			{ KeyType.GamePad_R1, "xbox_Rb" },
+			{ KeyType.GamePad_L2, "xbox_Lt" },
+			{ KeyType.GamePad_R2, "xbox_Rt" },
+			{ KeyType.GamePad_L3, "xbox_Ls" },
+			// This is the only available skin with a circled "R",
+			// although it has extra notch marks in its design
+			// that make it distinct from the _sprite_ we use
+			{ KeyType.GamePad_R3, "switch_Rs" },
+			{ KeyType.GamePad_Start, "xbox_M" },
+			{ KeyType.GamePad_Select, "xbox_V" },
+		};
 
 		static readonly Dictionary<KeyType, string> joyConTextureNameMap = new Dictionary<KeyType, string>
 		{
@@ -307,6 +325,21 @@ namespace GamepadSupportPlugin
 			{ "<sprite index=94>", "<sprite index=97>" },
 			{ "<sprite index=95>", "<sprite index=98>" },
 			{ "<sprite index=96>", "<sprite index=99>" },
+		};
+		static readonly Dictionary<KeyType, string> steamSteamDeckSkinNameMap = new Dictionary<KeyType, string>
+		{
+			{ KeyType.GamePad_A, "switch_A" },
+			{ KeyType.GamePad_B, "switch_B" },
+			{ KeyType.GamePad_X, "switch_X" },
+			{ KeyType.GamePad_Y, "switch_Y" },
+			{ KeyType.GamePad_L1, "ps_L1" },
+			{ KeyType.GamePad_R1, "ps_R1" },
+			{ KeyType.GamePad_L2, "ps_L2" },
+			{ KeyType.GamePad_R2, "ps_R2" },
+			{ KeyType.GamePad_L3, "ps_L3" },
+			{ KeyType.GamePad_R3, "ps_R3" },
+			{ KeyType.GamePad_Start, "xbox_M" },
+			{ KeyType.GamePad_Select, "xbox_V" },
 		};
 
 		// Random int values to avoid clashing with the base game and other mods
@@ -1169,13 +1202,24 @@ namespace GamepadSupportPlugin
 
 		internal static string GetTextSpineObjSkinSkinName_postfix(string __result, Dictionary<KeyType, string> ___steamSwitchSkinNameMap)
 		{
+			KeyType key;
 			switch (GameInput2.GetGamePadType())
 			{
+				case GamePadDeviceType.STEAM:
+					key = GameInput2.GetGamePadButtonKeyType(InputType.Decide);
+					return steamSteamControllerSkinNameMap.GetValueSafe(key) ?? "";
+
 				case JoyConGamePadDeviceType:
-					var key = GameInput2.GetGamePadButtonKeyType(InputType.Decide);
+					key = GameInput2.GetGamePadButtonKeyType(InputType.Decide);
 					return ___steamSwitchSkinNameMap.GetValueSafe(key) ?? "";
 
-					// the rest are like Xbox
+				case MobileTouchGamePadDeviceType:
+					// steamXboxSkinNameMap is applied by default
+					break;
+
+				case SteamDeckGamePadDeviceType:
+					key = GameInput2.GetGamePadButtonKeyType(InputType.Decide);
+					return steamSteamDeckSkinNameMap.GetValueSafe(key) ?? "";
 			}
 			return __result;
 		}
