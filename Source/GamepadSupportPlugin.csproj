@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>GamepadSupportPlugin</AssemblyName>
-    <Description>Improves gamepad support and fixes incorrect gamepad prompts.</Description>
+    <Description>Hides mouse pointer, improves gamepad support &amp; prompts.</Description>
     <TargetFramework>net461</TargetFramework>
     <Company>Chortos-2</Company>
-    <Copyright>0BSD. © Chortos-2, 9 Aug to 25 Sep 2022</Copyright>
+    <Copyright>0BSD. © Chortos-2, 2022–2023</Copyright>
     <Product>Gamepad support BepInEx plugin for Digimon Survive</Product>
-    <Version>1.2.0.0</Version>
+    <Version>1.3.0.0</Version>
     <!--<DefineConstants>SILENT</DefineConstants>-->
   </PropertyGroup>
   <ItemGroup>
