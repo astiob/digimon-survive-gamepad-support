@@ -12,51 +12,53 @@ using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using static GamePadDevice;
+using InputType = GameInput2.InputType;
+using KeyType = GameInput2.KeyType;
 
 namespace GamepadSupportPlugin
 {
 	static class Patches
 	{
-		static readonly Dictionary<GameInput2.KeyType, string> steamControllerTextureNameMap = new Dictionary<GameInput2.KeyType, string>
+		static readonly Dictionary<KeyType, string> steamControllerTextureNameMap = new Dictionary<KeyType, string>
 		{
-			{ GameInput2.KeyType.GamePad_A, "xb_button_02" },
-			{ GameInput2.KeyType.GamePad_B, "xb_button_01" },
-			{ GameInput2.KeyType.GamePad_X, "xb_button_03" },
-			{ GameInput2.KeyType.GamePad_Y, "xb_button_04" },
+			{ KeyType.GamePad_A, "xb_button_02" },
+			{ KeyType.GamePad_B, "xb_button_01" },
+			{ KeyType.GamePad_X, "xb_button_03" },
+			{ KeyType.GamePad_Y, "xb_button_04" },
 			// The shape isn't right, but it's the best we've got
-			{ GameInput2.KeyType.GamePad_L1, "xb_button_05" },
+			{ KeyType.GamePad_L1, "xb_button_05" },
 			// The shape isn't right, but it's the best we've got
-			{ GameInput2.KeyType.GamePad_R1, "xb_button_06" },
+			{ KeyType.GamePad_R1, "xb_button_06" },
 			// The shape isn't right, but it's the best we've got
-			{ GameInput2.KeyType.GamePad_L2, "xb_button_07" },
+			{ KeyType.GamePad_L2, "xb_button_07" },
 			// The shape isn't right, but it's the best we've got
-			{ GameInput2.KeyType.GamePad_R2, "xb_button_08" },
-			{ GameInput2.KeyType.GamePad_Up, "xb_button_13" },
-			{ GameInput2.KeyType.GamePad_Down, "xb_button_15" },
-			{ GameInput2.KeyType.GamePad_Left, "xb_button_16" },
-			{ GameInput2.KeyType.GamePad_Right, "xb_button_17" },
-			{ GameInput2.KeyType.GamePad_RStickUp, "ps_button_28" },
-			{ GameInput2.KeyType.GamePad_RStickDown, "ps_button_29" },
-			{ GameInput2.KeyType.GamePad_RStickLeft, "ps_button_30" },
-			{ GameInput2.KeyType.GamePad_RStickRight, "ps_button_31" },
-			{ GameInput2.KeyType.GamePad_LStickUp, "xb_button_20" },
-			{ GameInput2.KeyType.GamePad_LStickDown, "xb_button_21" },
-			{ GameInput2.KeyType.GamePad_LStickLeft, "xb_button_22" },
-			{ GameInput2.KeyType.GamePad_LStickRight, "xb_button_23" },
+			{ KeyType.GamePad_R2, "xb_button_08" },
+			{ KeyType.GamePad_Up, "xb_button_13" },
+			{ KeyType.GamePad_Down, "xb_button_15" },
+			{ KeyType.GamePad_Left, "xb_button_16" },
+			{ KeyType.GamePad_Right, "xb_button_17" },
+			{ KeyType.GamePad_RStickUp, "ps_button_28" },
+			{ KeyType.GamePad_RStickDown, "ps_button_29" },
+			{ KeyType.GamePad_RStickLeft, "ps_button_30" },
+			{ KeyType.GamePad_RStickRight, "ps_button_31" },
+			{ KeyType.GamePad_LStickUp, "xb_button_20" },
+			{ KeyType.GamePad_LStickDown, "xb_button_21" },
+			{ KeyType.GamePad_LStickLeft, "xb_button_22" },
+			{ KeyType.GamePad_LStickRight, "xb_button_23" },
 			// There's no suitable sprite, so use the least confusing one: this at least matches the name in the game's default Steam controller settings
-			{ GameInput2.KeyType.GamePad_Start, "xb_button_12" },
+			{ KeyType.GamePad_Start, "xb_button_12" },
 			// There's no suitable sprite, so use the least confusing one: this at least matches the name in the game's default Steam controller settings
-			{ GameInput2.KeyType.GamePad_Select, "xb_button_11" },
-			{ GameInput2.KeyType.GamePad_L3, "xb_button_09" },
-			{ GameInput2.KeyType.GamePad_R3, "ps_button_10" },
-			{ GameInput2.KeyType.GamePad_L3DI, "xb_button_09" },
-			{ GameInput2.KeyType.GamePad_R3DI, "ps_button_10" },
+			{ KeyType.GamePad_Select, "xb_button_11" },
+			{ KeyType.GamePad_L3, "xb_button_09" },
+			{ KeyType.GamePad_R3, "ps_button_10" },
+			{ KeyType.GamePad_L3DI, "xb_button_09" },
+			{ KeyType.GamePad_R3DI, "ps_button_10" },
 			// Left trackpad
-			//{ GameInput2.KeyType.NpadButton_StickLUp, "ps_button_22" },
-			//{ GameInput2.KeyType.NpadButton_StickLDown, "ps_button_23" },
-			//{ GameInput2.KeyType.NpadButton_StickLLeft, "ps_button_24" },
-			//{ GameInput2.KeyType.NpadButton_StickLRight, "ps_button_25" },
-			//{ GameInput2.KeyType.NpadButton_StickL, "ps_button_15" },
+			//{ KeyType.NpadButton_StickLUp, "ps_button_22" },
+			//{ KeyType.NpadButton_StickLDown, "ps_button_23" },
+			//{ KeyType.NpadButton_StickLLeft, "ps_button_24" },
+			//{ KeyType.NpadButton_StickLRight, "ps_button_25" },
+			//{ KeyType.NpadButton_StickL, "ps_button_15" },
 		};
 		static readonly string[][] steamControllerDirectionInputTextureNames =
 		{
@@ -64,19 +66,19 @@ namespace GamepadSupportPlugin
 			new string[3] { "xb_button_24", "xb_button_25", "xb_button_09" },
 			new string[3] { "ps_button_32", "ps_button_33", "ps_button_10" },
 		};
-		static readonly Dictionary<GameInput2.KeyType, string> gamepadButtonKeyTypeToEmojiStrMapSteamController = new Dictionary<GameInput2.KeyType, string>
+		static readonly Dictionary<KeyType, string> gamepadButtonKeyTypeToEmojiStrMapSteamController = new Dictionary<KeyType, string>
 		{
-			{ GameInput2.KeyType.GamePad_B, "<sprite index=32>" },
-			{ GameInput2.KeyType.GamePad_A, "<sprite index=33>" },
-			{ GameInput2.KeyType.GamePad_X, "<sprite index=34>" },
-			{ GameInput2.KeyType.GamePad_Y, "<sprite index=35>" },
-			{ GameInput2.KeyType.GamePad_L1, "<sprite index=36>" },
-			{ GameInput2.KeyType.GamePad_R1, "<sprite index=37>" },
-			{ GameInput2.KeyType.GamePad_L2, "<sprite index=38>" },
-			{ GameInput2.KeyType.GamePad_R2, "<sprite index=39>" },
-			{ GameInput2.KeyType.GamePad_L3, "<sprite index=40>" },
-			{ GameInput2.KeyType.GamePad_R3, "<sprite index=17>" },
-			{ GameInput2.KeyType.GamePad_Select, "<sprite index=128>" },
+			{ KeyType.GamePad_B, "<sprite index=32>" },
+			{ KeyType.GamePad_A, "<sprite index=33>" },
+			{ KeyType.GamePad_X, "<sprite index=34>" },
+			{ KeyType.GamePad_Y, "<sprite index=35>" },
+			{ KeyType.GamePad_L1, "<sprite index=36>" },
+			{ KeyType.GamePad_R1, "<sprite index=37>" },
+			{ KeyType.GamePad_L2, "<sprite index=38>" },
+			{ KeyType.GamePad_R2, "<sprite index=39>" },
+			{ KeyType.GamePad_L3, "<sprite index=40>" },
+			{ KeyType.GamePad_R3, "<sprite index=17>" },
+			{ KeyType.GamePad_Select, "<sprite index=128>" },
 		};
 		static readonly Dictionary<string, string> stickAndDpadEmojiForSteamController = new Dictionary<string, string> {
 			// PS4's right stick
@@ -84,44 +86,44 @@ namespace GamepadSupportPlugin
 			{ "<sprite index=41>", "<sprite index=17>" },
 		};
 
-		static readonly Dictionary<GameInput2.KeyType, string> joyConTextureNameMap = new Dictionary<GameInput2.KeyType, string>
+		static readonly Dictionary<KeyType, string> joyConTextureNameMap = new Dictionary<KeyType, string>
 		{
-			{ GameInput2.KeyType.GamePad_A, "sw_button_19" },
-			{ GameInput2.KeyType.GamePad_B, "sw_button_17" },
-			{ GameInput2.KeyType.GamePad_X, "sw_button_13" },
-			{ GameInput2.KeyType.GamePad_Y, "sw_button_18" },
-			{ GameInput2.KeyType.GamePad_L1, "sw_button_15" },
-			{ GameInput2.KeyType.GamePad_R1, "sw_button_16" },
+			{ KeyType.GamePad_A, "sw_button_19" },
+			{ KeyType.GamePad_B, "sw_button_17" },
+			{ KeyType.GamePad_X, "sw_button_13" },
+			{ KeyType.GamePad_Y, "sw_button_18" },
+			{ KeyType.GamePad_L1, "sw_button_15" },
+			{ KeyType.GamePad_R1, "sw_button_16" },
 			// L2 & R2 don't exist in the default configuration.
 			// Use the default ZL & ZR sprites, but it's impossible
 			// for these two buttons to both exist on a single JoyCon.
-			{ GameInput2.KeyType.GamePad_L2, "sw_button_07" },
-			{ GameInput2.KeyType.GamePad_R2, "sw_button_08" },
+			{ KeyType.GamePad_L2, "sw_button_07" },
+			{ KeyType.GamePad_R2, "sw_button_08" },
 			// The D-pad doesn't exist on a single JoyCon. Ideally we'd
 			// hide any D-pad sprites entirely, but for now keep the
 			// Xbox's sprites, which are conspicuously different from
 			// the Switch's button diamond sprites that we use for ABXY
 			// (although they're similar to the Switch's Plus sprite).
-			{ GameInput2.KeyType.GamePad_Up, "xb_button_13" },
-			{ GameInput2.KeyType.GamePad_Down, "xb_button_15" },
-			{ GameInput2.KeyType.GamePad_Left, "xb_button_16" },
-			{ GameInput2.KeyType.GamePad_Right, "xb_button_17" },
+			{ KeyType.GamePad_Up, "xb_button_13" },
+			{ KeyType.GamePad_Down, "xb_button_15" },
+			{ KeyType.GamePad_Left, "xb_button_16" },
+			{ KeyType.GamePad_Right, "xb_button_17" },
 			// The R-stick doesn't exist on a single JoyCon.
 			// There's nothing we can do about that...
-			{ GameInput2.KeyType.GamePad_RStickUp, "sw_button_28" },
-			{ GameInput2.KeyType.GamePad_RStickDown, "sw_button_29" },
-			{ GameInput2.KeyType.GamePad_RStickLeft, "sw_button_30" },
-			{ GameInput2.KeyType.GamePad_RStickRight, "sw_button_31" },
-			{ GameInput2.KeyType.GamePad_LStickUp, "sw_button_22" },
-			{ GameInput2.KeyType.GamePad_LStickDown, "sw_button_23" },
-			{ GameInput2.KeyType.GamePad_LStickLeft, "sw_button_24" },
-			{ GameInput2.KeyType.GamePad_LStickRight, "sw_button_25" },
-			{ GameInput2.KeyType.GamePad_Start, "sw_button_12" },
-			{ GameInput2.KeyType.GamePad_Select, "sw_button_11" },
-			{ GameInput2.KeyType.GamePad_L3, "sw_button_09" },
-			{ GameInput2.KeyType.GamePad_R3, "sw_button_10" },
-			{ GameInput2.KeyType.GamePad_L3DI, "sw_button_09" },
-			{ GameInput2.KeyType.GamePad_R3DI, "sw_button_10" },
+			{ KeyType.GamePad_RStickUp, "sw_button_28" },
+			{ KeyType.GamePad_RStickDown, "sw_button_29" },
+			{ KeyType.GamePad_RStickLeft, "sw_button_30" },
+			{ KeyType.GamePad_RStickRight, "sw_button_31" },
+			{ KeyType.GamePad_LStickUp, "sw_button_22" },
+			{ KeyType.GamePad_LStickDown, "sw_button_23" },
+			{ KeyType.GamePad_LStickLeft, "sw_button_24" },
+			{ KeyType.GamePad_LStickRight, "sw_button_25" },
+			{ KeyType.GamePad_Start, "sw_button_12" },
+			{ KeyType.GamePad_Select, "sw_button_11" },
+			{ KeyType.GamePad_L3, "sw_button_09" },
+			{ KeyType.GamePad_R3, "sw_button_10" },
+			{ KeyType.GamePad_L3DI, "sw_button_09" },
+			{ KeyType.GamePad_R3DI, "sw_button_10" },
 		};
 		static readonly string[][] joyConDirectionInputTextureNames =
 		{
@@ -129,20 +131,20 @@ namespace GamepadSupportPlugin
 			new string[3] { "sw_button_26", "sw_button_27", "sw_button_09" },
 			new string[3] { "sw_button_32", "sw_button_33", "sw_button_10" },
 		};
-		static readonly Dictionary<GameInput2.KeyType, string> gamepadButtonKeyTypeToEmojiStrMapJoyCon = new Dictionary<GameInput2.KeyType, string>
+		static readonly Dictionary<KeyType, string> gamepadButtonKeyTypeToEmojiStrMapJoyCon = new Dictionary<KeyType, string>
 		{
-			{ GameInput2.KeyType.GamePad_B, "<sprite index=95>" },
-			{ GameInput2.KeyType.GamePad_A, "<sprite index=94>" },
-			{ GameInput2.KeyType.GamePad_X, "<sprite index=30>" },
-			{ GameInput2.KeyType.GamePad_Y, "<sprite index=96>" },
+			{ KeyType.GamePad_B, "<sprite index=95>" },
+			{ KeyType.GamePad_A, "<sprite index=94>" },
+			{ KeyType.GamePad_X, "<sprite index=30>" },
+			{ KeyType.GamePad_Y, "<sprite index=96>" },
 			// SL & SR sprites don't exist here, so use the standard Switch L & R sprites
-			{ GameInput2.KeyType.GamePad_L1, "<sprite index=24>" },
-			{ GameInput2.KeyType.GamePad_R1, "<sprite index=25>" },
-			{ GameInput2.KeyType.GamePad_L2, "<sprite index=26>" },
-			{ GameInput2.KeyType.GamePad_R2, "<sprite index=27>" },
-			{ GameInput2.KeyType.GamePad_L3, "<sprite index=28>" },
-			{ GameInput2.KeyType.GamePad_R3, "<sprite index=29>" },
-			{ GameInput2.KeyType.GamePad_Select, "<sprite index=129>" },
+			{ KeyType.GamePad_L1, "<sprite index=24>" },
+			{ KeyType.GamePad_R1, "<sprite index=25>" },
+			{ KeyType.GamePad_L2, "<sprite index=26>" },
+			{ KeyType.GamePad_R2, "<sprite index=27>" },
+			{ KeyType.GamePad_L3, "<sprite index=28>" },
+			{ KeyType.GamePad_R3, "<sprite index=29>" },
+			{ KeyType.GamePad_Select, "<sprite index=129>" },
 		};
 		static readonly Dictionary<string, string> stickAndDpadEmojiForJoyCon = new Dictionary<string, string> {
 			// Switch's sticks
@@ -165,42 +167,42 @@ namespace GamepadSupportPlugin
 			{ "<sprite index=96>", "<sprite index=99>" },
 		};
 
-		static readonly Dictionary<GameInput2.KeyType, string> mobileTouchTextureNameMap = new Dictionary<GameInput2.KeyType, string>
+		static readonly Dictionary<KeyType, string> mobileTouchTextureNameMap = new Dictionary<KeyType, string>
 		{
-			{ GameInput2.KeyType.GamePad_A, "xb_button_02" },
-			{ GameInput2.KeyType.GamePad_B, "xb_button_01" },
-			{ GameInput2.KeyType.GamePad_X, "xb_button_03" },
-			{ GameInput2.KeyType.GamePad_Y, "xb_button_04" },
+			{ KeyType.GamePad_A, "xb_button_02" },
+			{ KeyType.GamePad_B, "xb_button_01" },
+			{ KeyType.GamePad_X, "xb_button_03" },
+			{ KeyType.GamePad_Y, "xb_button_04" },
 			// The shape isn't right, but it's the best we've got
-			{ GameInput2.KeyType.GamePad_L1, "xb_button_05" },
+			{ KeyType.GamePad_L1, "xb_button_05" },
 			// The shape isn't right, but it's the best we've got
-			{ GameInput2.KeyType.GamePad_R1, "xb_button_06" },
+			{ KeyType.GamePad_R1, "xb_button_06" },
 			// The shape isn't right, but it's the best we've got
-			{ GameInput2.KeyType.GamePad_L2, "xb_button_07" },
+			{ KeyType.GamePad_L2, "xb_button_07" },
 			// The shape isn't right, but it's the best we've got
-			{ GameInput2.KeyType.GamePad_R2, "xb_button_08" },
-			{ GameInput2.KeyType.GamePad_Up, "ps_button_13" },
-			{ GameInput2.KeyType.GamePad_Down, "ps_button_17" },
-			{ GameInput2.KeyType.GamePad_Left, "ps_button_18" },
-			{ GameInput2.KeyType.GamePad_Right, "ps_button_19" },
+			{ KeyType.GamePad_R2, "xb_button_08" },
+			{ KeyType.GamePad_Up, "ps_button_13" },
+			{ KeyType.GamePad_Down, "ps_button_17" },
+			{ KeyType.GamePad_Left, "ps_button_18" },
+			{ KeyType.GamePad_Right, "ps_button_19" },
 			// Use PlayStation's sprites (that is, "L" & "R" instead of "LS" & "RS")
 			// because the mobile app's control UI uses "LS" & "RS" for stick *clicks*.
-			{ GameInput2.KeyType.GamePad_RStickUp, "ps_button_28" },
-			{ GameInput2.KeyType.GamePad_RStickDown, "ps_button_29" },
-			{ GameInput2.KeyType.GamePad_RStickLeft, "ps_button_30" },
-			{ GameInput2.KeyType.GamePad_RStickRight, "ps_button_31" },
-			{ GameInput2.KeyType.GamePad_LStickUp, "ps_button_22" },
-			{ GameInput2.KeyType.GamePad_LStickDown, "ps_button_23" },
-			{ GameInput2.KeyType.GamePad_LStickLeft, "ps_button_24" },
-			{ GameInput2.KeyType.GamePad_LStickRight, "ps_button_25" },
+			{ KeyType.GamePad_RStickUp, "ps_button_28" },
+			{ KeyType.GamePad_RStickDown, "ps_button_29" },
+			{ KeyType.GamePad_RStickLeft, "ps_button_30" },
+			{ KeyType.GamePad_RStickRight, "ps_button_31" },
+			{ KeyType.GamePad_LStickUp, "ps_button_22" },
+			{ KeyType.GamePad_LStickDown, "ps_button_23" },
+			{ KeyType.GamePad_LStickLeft, "ps_button_24" },
+			{ KeyType.GamePad_LStickRight, "ps_button_25" },
 			// There's no suitable sprite, so use the least confusing one: this at least matches the name in the game's default Steam controller settings
-			{ GameInput2.KeyType.GamePad_Start, "xb_button_12" },
+			{ KeyType.GamePad_Start, "xb_button_12" },
 			// There's no suitable sprite, so use the least confusing one: this at least matches the name in the game's default Steam controller settings
-			{ GameInput2.KeyType.GamePad_Select, "xb_button_11" },
-			{ GameInput2.KeyType.GamePad_L3, "xb_button_09" },
-			{ GameInput2.KeyType.GamePad_R3, "xb_button_10" },
-			{ GameInput2.KeyType.GamePad_L3DI, "xb_button_09" },
-			{ GameInput2.KeyType.GamePad_R3DI, "xb_button_10" },
+			{ KeyType.GamePad_Select, "xb_button_11" },
+			{ KeyType.GamePad_L3, "xb_button_09" },
+			{ KeyType.GamePad_R3, "xb_button_10" },
+			{ KeyType.GamePad_L3DI, "xb_button_09" },
+			{ KeyType.GamePad_R3DI, "xb_button_10" },
 		};
 		static readonly string[][] mobileTouchDirectionInputTextureNames =
 		{
@@ -229,38 +231,38 @@ namespace GamepadSupportPlugin
 			{ "<sprite index=99>", "<sprite index=93>" },
 		};
 
-		static readonly Dictionary<GameInput2.KeyType, string> steamDeckTextureNameMap = new Dictionary<GameInput2.KeyType, string>
+		static readonly Dictionary<KeyType, string> steamDeckTextureNameMap = new Dictionary<KeyType, string>
 		{
-			{ GameInput2.KeyType.GamePad_A, "sw_button_01" },
-			{ GameInput2.KeyType.GamePad_B, "sw_button_02" },
-			{ GameInput2.KeyType.GamePad_X, "sw_button_04" },
-			{ GameInput2.KeyType.GamePad_Y, "sw_button_03" },
+			{ KeyType.GamePad_A, "sw_button_01" },
+			{ KeyType.GamePad_B, "sw_button_02" },
+			{ KeyType.GamePad_X, "sw_button_04" },
+			{ KeyType.GamePad_Y, "sw_button_03" },
 			// The shape isn't quite right, but it's the best we've got
-			{ GameInput2.KeyType.GamePad_L1, "ps_button_05" },
+			{ KeyType.GamePad_L1, "ps_button_05" },
 			// The shape isn't quite right, but it's the best we've got
-			{ GameInput2.KeyType.GamePad_R1, "ps_button_06" },
-			{ GameInput2.KeyType.GamePad_L2, "ps_button_07" },
-			{ GameInput2.KeyType.GamePad_R2, "ps_button_08" },
-			{ GameInput2.KeyType.GamePad_Up, "xb_button_13" },
-			{ GameInput2.KeyType.GamePad_Down, "xb_button_15" },
-			{ GameInput2.KeyType.GamePad_Left, "xb_button_16" },
-			{ GameInput2.KeyType.GamePad_Right, "xb_button_17" },
-			{ GameInput2.KeyType.GamePad_RStickUp, "ps_button_28" },
-			{ GameInput2.KeyType.GamePad_RStickDown, "ps_button_29" },
-			{ GameInput2.KeyType.GamePad_RStickLeft, "ps_button_30" },
-			{ GameInput2.KeyType.GamePad_RStickRight, "ps_button_31" },
-			{ GameInput2.KeyType.GamePad_LStickUp, "ps_button_22" },
-			{ GameInput2.KeyType.GamePad_LStickDown, "ps_button_23" },
-			{ GameInput2.KeyType.GamePad_LStickLeft, "ps_button_24" },
-			{ GameInput2.KeyType.GamePad_LStickRight, "ps_button_25" },
+			{ KeyType.GamePad_R1, "ps_button_06" },
+			{ KeyType.GamePad_L2, "ps_button_07" },
+			{ KeyType.GamePad_R2, "ps_button_08" },
+			{ KeyType.GamePad_Up, "xb_button_13" },
+			{ KeyType.GamePad_Down, "xb_button_15" },
+			{ KeyType.GamePad_Left, "xb_button_16" },
+			{ KeyType.GamePad_Right, "xb_button_17" },
+			{ KeyType.GamePad_RStickUp, "ps_button_28" },
+			{ KeyType.GamePad_RStickDown, "ps_button_29" },
+			{ KeyType.GamePad_RStickLeft, "ps_button_30" },
+			{ KeyType.GamePad_RStickRight, "ps_button_31" },
+			{ KeyType.GamePad_LStickUp, "ps_button_22" },
+			{ KeyType.GamePad_LStickDown, "ps_button_23" },
+			{ KeyType.GamePad_LStickLeft, "ps_button_24" },
+			{ KeyType.GamePad_LStickRight, "ps_button_25" },
 			// The shape isn't quite right, but it's the best we've got
-			{ GameInput2.KeyType.GamePad_Start, "xb_button_12" },
+			{ KeyType.GamePad_Start, "xb_button_12" },
 			// The shape isn't quite right, but it's the best we've got
-			{ GameInput2.KeyType.GamePad_Select, "xb_button_11" },
-			{ GameInput2.KeyType.GamePad_L3, "ps_button_15" },
-			{ GameInput2.KeyType.GamePad_R3, "ps_button_16" },
-			{ GameInput2.KeyType.GamePad_L3DI, "ps_button_15" },
-			{ GameInput2.KeyType.GamePad_R3DI, "ps_button_16" },
+			{ KeyType.GamePad_Select, "xb_button_11" },
+			{ KeyType.GamePad_L3, "ps_button_15" },
+			{ KeyType.GamePad_R3, "ps_button_16" },
+			{ KeyType.GamePad_L3DI, "ps_button_15" },
+			{ KeyType.GamePad_R3DI, "ps_button_16" },
 		};
 		static readonly string[][] steamDeckDirectionInputTextureNames =
 		{
@@ -268,19 +270,19 @@ namespace GamepadSupportPlugin
 			new string[3] { "ps_button_26", "ps_button_27", "ps_button_09" },
 			new string[3] { "ps_button_32", "ps_button_33", "ps_button_10" },
 		};
-		static readonly Dictionary<GameInput2.KeyType, string> gamepadButtonKeyTypeToEmojiStrMapSteamDeck = new Dictionary<GameInput2.KeyType, string>
+		static readonly Dictionary<KeyType, string> gamepadButtonKeyTypeToEmojiStrMapSteamDeck = new Dictionary<KeyType, string>
 		{
-			{ GameInput2.KeyType.GamePad_B, "<sprite index=21>" },
-			{ GameInput2.KeyType.GamePad_A, "<sprite index=20>" },
-			{ GameInput2.KeyType.GamePad_X, "<sprite index=23>" },
-			{ GameInput2.KeyType.GamePad_Y, "<sprite index=22>" },
-			{ GameInput2.KeyType.GamePad_L1, "<sprite index=12>" },
-			{ GameInput2.KeyType.GamePad_R1, "<sprite index=13>" },
-			{ GameInput2.KeyType.GamePad_L2, "<sprite index=14>" },
-			{ GameInput2.KeyType.GamePad_R2, "<sprite index=15>" },
-			{ GameInput2.KeyType.GamePad_L3, "<sprite index=126>" },
-			{ GameInput2.KeyType.GamePad_R3, "<sprite index=127>" },
-			{ GameInput2.KeyType.GamePad_Select, "<sprite index=128>" },
+			{ KeyType.GamePad_B, "<sprite index=21>" },
+			{ KeyType.GamePad_A, "<sprite index=20>" },
+			{ KeyType.GamePad_X, "<sprite index=23>" },
+			{ KeyType.GamePad_Y, "<sprite index=22>" },
+			{ KeyType.GamePad_L1, "<sprite index=12>" },
+			{ KeyType.GamePad_R1, "<sprite index=13>" },
+			{ KeyType.GamePad_L2, "<sprite index=14>" },
+			{ KeyType.GamePad_R2, "<sprite index=15>" },
+			{ KeyType.GamePad_L3, "<sprite index=126>" },
+			{ KeyType.GamePad_R3, "<sprite index=127>" },
+			{ KeyType.GamePad_Select, "<sprite index=128>" },
 		};
 		static readonly Dictionary<string, string> stickAndDpadEmojiForSteamDeck = new Dictionary<string, string> {
 			// PS4's sticks
@@ -341,7 +343,7 @@ namespace GamepadSupportPlugin
 					return new Regex("<sprite index=[^>]*>").Replace(text, m =>
 					{
 						var keyType = SurvivorDefine.GetGamepadButtonKeyTypeFromEmojiStr(m.Value);
-						if (keyType == (GameInput2.KeyType)(-1))
+						if (keyType == (KeyType)(-1))
 							return m.Value;
 						else
 							return SurvivorDefine.GetEmojiStrFromGamepadButtonKeyType(gamePadDeviceType, keyType);
@@ -353,7 +355,7 @@ namespace GamepadSupportPlugin
 		}
 
 		static int EnsureSteamControllerTextureNameMapIndex(
-			ref Dictionary<GameInput2.KeyType, string>[] ___gamePadTextureNameMap,
+			ref Dictionary<KeyType, string>[] ___gamePadTextureNameMap,
 			ref string[][][] ___directionInputTetureNames)
 		{
 			int steamControllerTextureNameMapIndex = Array.IndexOf(___gamePadTextureNameMap, steamControllerTextureNameMap);
@@ -371,7 +373,7 @@ namespace GamepadSupportPlugin
 		}
 
 		static int EnsureJoyConTextureNameMapIndex(
-			ref Dictionary<GameInput2.KeyType, string>[] ___gamePadTextureNameMap,
+			ref Dictionary<KeyType, string>[] ___gamePadTextureNameMap,
 			ref string[][][] ___directionInputTetureNames)
 		{
 			int joyConTextureNameMapIndex = Array.IndexOf(___gamePadTextureNameMap, joyConTextureNameMap);
@@ -389,7 +391,7 @@ namespace GamepadSupportPlugin
 		}
 
 		static int EnsureMobileTouchTextureNameMapIndex(
-			ref Dictionary<GameInput2.KeyType, string>[] ___gamePadTextureNameMap,
+			ref Dictionary<KeyType, string>[] ___gamePadTextureNameMap,
 			ref string[][][] ___directionInputTetureNames)
 		{
 			int mobileTouchTextureNameMapIndex = Array.IndexOf(___gamePadTextureNameMap, mobileTouchTextureNameMap);
@@ -407,7 +409,7 @@ namespace GamepadSupportPlugin
 		}
 
 		static int EnsureSteamDeckTextureNameMapIndex(
-			ref Dictionary<GameInput2.KeyType, string>[] ___gamePadTextureNameMap,
+			ref Dictionary<KeyType, string>[] ___gamePadTextureNameMap,
 			ref string[][][] ___directionInputTetureNames)
 		{
 			int steamDeckTextureNameMapIndex = Array.IndexOf(___gamePadTextureNameMap, steamDeckTextureNameMap);
@@ -426,88 +428,88 @@ namespace GamepadSupportPlugin
 
 		[HarmonyPatch(typeof(SteamGamePad), MethodType.Constructor)]
 		[HarmonyPrefix]
-		static void SteamGamePad_preconstruct(Dictionary<Steamworks.EInputActionOrigin, GameInput2.KeyType[]> ___eInputActionOriginToKeyInputMap)
+		static void SteamGamePad_preconstruct(Dictionary<Steamworks.EInputActionOrigin, KeyType[]> ___eInputActionOriginToKeyInputMap)
 		{
 			// Single Switch JoyCon
-			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_Switch_JoyConButton_E] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_A };
-			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_Switch_JoyConButton_S] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_B };
-			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_Switch_JoyConButton_N] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_X };
-			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_Switch_JoyConButton_W] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_Y };
+			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_Switch_JoyConButton_E] = new KeyType[1] { KeyType.GamePad_A };
+			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_Switch_JoyConButton_S] = new KeyType[1] { KeyType.GamePad_B };
+			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_Switch_JoyConButton_N] = new KeyType[1] { KeyType.GamePad_X };
+			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_Switch_JoyConButton_W] = new KeyType[1] { KeyType.GamePad_Y };
 
 			// Steam Deck
-			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_A] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_A };
-			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_B] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_B };
-			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_X] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_X };
-			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_Y] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_Y };
-			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_L1] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_L1 };
-			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_R1] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_R1 };
-			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_Menu] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_Start };
-			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_View] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_Select };
-			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_LeftPad_Swipe] = new GameInput2.KeyType[4]
+			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_A] = new KeyType[1] { KeyType.GamePad_A };
+			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_B] = new KeyType[1] { KeyType.GamePad_B };
+			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_X] = new KeyType[1] { KeyType.GamePad_X };
+			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_Y] = new KeyType[1] { KeyType.GamePad_Y };
+			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_L1] = new KeyType[1] { KeyType.GamePad_L1 };
+			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_R1] = new KeyType[1] { KeyType.GamePad_R1 };
+			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_Menu] = new KeyType[1] { KeyType.GamePad_Start };
+			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_View] = new KeyType[1] { KeyType.GamePad_Select };
+			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_LeftPad_Swipe] = new KeyType[4]
 			//{
-			//		GameInput2.KeyType.GamePad_LStickUp,
-			//		GameInput2.KeyType.GamePad_LStickDown,
-			//		GameInput2.KeyType.GamePad_LStickLeft,
-			//		GameInput2.KeyType.GamePad_LStickRight
+			//		KeyType.GamePad_LStickUp,
+			//		KeyType.GamePad_LStickDown,
+			//		KeyType.GamePad_LStickLeft,
+			//		KeyType.GamePad_LStickRight
 			//};
-			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_LeftPad_Click] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_L3 };
-			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_LeftPad_DPadNorth] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_Up };
-			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_LeftPad_DPadSouth] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_Down };
-			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_LeftPad_DPadWest] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_Left };
-			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_LeftPad_DPadEast] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_Right };
-			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_RightPad_Swipe] = new GameInput2.KeyType[4]
+			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_LeftPad_Click] = new KeyType[1] { KeyType.GamePad_L3 };
+			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_LeftPad_DPadNorth] = new KeyType[1] { KeyType.GamePad_Up };
+			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_LeftPad_DPadSouth] = new KeyType[1] { KeyType.GamePad_Down };
+			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_LeftPad_DPadWest] = new KeyType[1] { KeyType.GamePad_Left };
+			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_LeftPad_DPadEast] = new KeyType[1] { KeyType.GamePad_Right };
+			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_RightPad_Swipe] = new KeyType[4]
 			//{
-			//		GameInput2.KeyType.GamePad_RStickUp,
-			//		GameInput2.KeyType.GamePad_RStickDown,
-			//		GameInput2.KeyType.GamePad_RStickLeft,
-			//		GameInput2.KeyType.GamePad_RStickRight
+			//		KeyType.GamePad_RStickUp,
+			//		KeyType.GamePad_RStickDown,
+			//		KeyType.GamePad_RStickLeft,
+			//		KeyType.GamePad_RStickRight
 			//};
-			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_RightPad_Click] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_R3 };
-			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_RightPad_DPadNorth] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_Y };
-			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_RightPad_DPadSouth] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_A };
-			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_RightPad_DPadWest] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_X };
-			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_RightPad_DPadEast] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_B };
-			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_L2_SoftPull] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_L2 };
-			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_L2] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_L2 };
-			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_R2_SoftPull] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_R2 };
-			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_R2] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_R2 };
-			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_LeftStick_Move] = new GameInput2.KeyType[4]
+			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_RightPad_Click] = new KeyType[1] { KeyType.GamePad_R3 };
+			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_RightPad_DPadNorth] = new KeyType[1] { KeyType.GamePad_Y };
+			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_RightPad_DPadSouth] = new KeyType[1] { KeyType.GamePad_A };
+			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_RightPad_DPadWest] = new KeyType[1] { KeyType.GamePad_X };
+			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_RightPad_DPadEast] = new KeyType[1] { KeyType.GamePad_B };
+			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_L2_SoftPull] = new KeyType[1] { KeyType.GamePad_L2 };
+			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_L2] = new KeyType[1] { KeyType.GamePad_L2 };
+			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_R2_SoftPull] = new KeyType[1] { KeyType.GamePad_R2 };
+			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_R2] = new KeyType[1] { KeyType.GamePad_R2 };
+			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_LeftStick_Move] = new KeyType[4]
 			{
-					GameInput2.KeyType.GamePad_LStickUp,
-					GameInput2.KeyType.GamePad_LStickDown,
-					GameInput2.KeyType.GamePad_LStickLeft,
-					GameInput2.KeyType.GamePad_LStickRight
+					KeyType.GamePad_LStickUp,
+					KeyType.GamePad_LStickDown,
+					KeyType.GamePad_LStickLeft,
+					KeyType.GamePad_LStickRight
 			};
-			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_L3] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_L3 };
-			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_LeftStick_DPadNorth] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_Up };
-			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_LeftStick_DPadSouth] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_Down };
-			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_LeftStick_DPadWest] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_Left };
-			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_LeftStick_DPadEast] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_Right };
-			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_RightStick_Move] = new GameInput2.KeyType[4]
+			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_L3] = new KeyType[1] { KeyType.GamePad_L3 };
+			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_LeftStick_DPadNorth] = new KeyType[1] { KeyType.GamePad_Up };
+			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_LeftStick_DPadSouth] = new KeyType[1] { KeyType.GamePad_Down };
+			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_LeftStick_DPadWest] = new KeyType[1] { KeyType.GamePad_Left };
+			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_LeftStick_DPadEast] = new KeyType[1] { KeyType.GamePad_Right };
+			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_RightStick_Move] = new KeyType[4]
 			{
-					GameInput2.KeyType.GamePad_RStickUp,
-					GameInput2.KeyType.GamePad_RStickDown,
-					GameInput2.KeyType.GamePad_RStickLeft,
-					GameInput2.KeyType.GamePad_RStickRight
+					KeyType.GamePad_RStickUp,
+					KeyType.GamePad_RStickDown,
+					KeyType.GamePad_RStickLeft,
+					KeyType.GamePad_RStickRight
 			};
-			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_R3] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_R3 };
-			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_RightStick_DPadNorth] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_Up };
-			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_RightStick_DPadSouth] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_Down };
-			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_RightStick_DPadWest] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_Left };
-			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_RightStick_DPadEast] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_Right };
-			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_DPad_North] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_Up };
-			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_DPad_South] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_Down };
-			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_DPad_West] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_Left };
-			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_DPad_East] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_Right };
+			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_R3] = new KeyType[1] { KeyType.GamePad_R3 };
+			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_RightStick_DPadNorth] = new KeyType[1] { KeyType.GamePad_Up };
+			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_RightStick_DPadSouth] = new KeyType[1] { KeyType.GamePad_Down };
+			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_RightStick_DPadWest] = new KeyType[1] { KeyType.GamePad_Left };
+			//___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_RightStick_DPadEast] = new KeyType[1] { KeyType.GamePad_Right };
+			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_DPad_North] = new KeyType[1] { KeyType.GamePad_Up };
+			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_DPad_South] = new KeyType[1] { KeyType.GamePad_Down };
+			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_DPad_West] = new KeyType[1] { KeyType.GamePad_Left };
+			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_DPad_East] = new KeyType[1] { KeyType.GamePad_Right };
 		}
 
 		[HarmonyPatch(typeof(InputTextureDefine), "GetTextureNameMapIndex")]
 		[HarmonyPostfix]
 		static void GetTextureNameMapIndex_postfix(
 			ref int __result,
-			ref Dictionary<GameInput2.KeyType, string>[] ___gamePadTextureNameMap,
+			ref Dictionary<KeyType, string>[] ___gamePadTextureNameMap,
 			ref string[][][] ___directionInputTetureNames,
-			Dictionary<GameInput2.KeyType, string> ___steamSwitchTextureNameMap)
+			Dictionary<KeyType, string> ___steamSwitchTextureNameMap)
 		{
 #if DEBUG
 			var resultBeforePatch = __result;
@@ -516,12 +518,12 @@ namespace GamepadSupportPlugin
 			switch (GameInput2.GetGamePadType())
 			{
 				case GamePadDeviceType.SWITCH:
-					if (___steamSwitchTextureNameMap[GameInput2.KeyType.GamePad_L3] == "sw_button_15")
+					if (___steamSwitchTextureNameMap[KeyType.GamePad_L3] == "sw_button_15")
 					{
-						___steamSwitchTextureNameMap[GameInput2.KeyType.GamePad_L3] = "sw_button_09";
-						___steamSwitchTextureNameMap[GameInput2.KeyType.GamePad_R3] = "sw_button_10";
-						___steamSwitchTextureNameMap[GameInput2.KeyType.GamePad_L3DI] = "sw_button_09";
-						___steamSwitchTextureNameMap[GameInput2.KeyType.GamePad_R3DI] = "sw_button_10";
+						___steamSwitchTextureNameMap[KeyType.GamePad_L3] = "sw_button_09";
+						___steamSwitchTextureNameMap[KeyType.GamePad_R3] = "sw_button_10";
+						___steamSwitchTextureNameMap[KeyType.GamePad_L3DI] = "sw_button_09";
+						___steamSwitchTextureNameMap[KeyType.GamePad_R3DI] = "sw_button_10";
 					}
 					break;
 				case GamePadDeviceType.STEAM:
@@ -603,7 +605,7 @@ namespace GamepadSupportPlugin
 			bool ___isInitalized,
 			string[] ___ActionHandleNames,
 			Steamworks.EInputActionOrigin[] ___m_eInputActionOrigins,
-			Dictionary<Steamworks.EInputActionOrigin, GameInput2.KeyType[]> ___eInputActionOriginToKeyInputMap)
+			Dictionary<Steamworks.EInputActionOrigin, KeyType[]> ___eInputActionOriginToKeyInputMap)
 		{
 			var IsAnalogActionHandleType = AccessTools.Method(typeof(SteamGamePad), "IsAnalogActionHandleType").CreateDelegate<Func<ActionHandleType, bool>>();
 			var actionSetHandle = SteamInput.GetActionSetHandle("MenuControls");
@@ -845,12 +847,12 @@ namespace GamepadSupportPlugin
 		}
 
 		static bool TryMapInputActionOrigin(
-			Dictionary<Steamworks.EInputActionOrigin, GameInput2.KeyType[]> eInputActionOriginToKeyInputMap,
+			Dictionary<Steamworks.EInputActionOrigin, KeyType[]> eInputActionOriginToKeyInputMap,
 			Steamworks.EInputActionOrigin[] eInputActionOrigins,
 			int n,
-			out GameInput2.KeyType[] keyTypes)
+			out KeyType[] keyTypes)
 		{
-			GameInput2.KeyType[] value = null;
+			KeyType[] value = null;
 			if (eInputActionOrigins.Take(n).Any(origin => eInputActionOriginToKeyInputMap.TryGetValue(origin, out value)) ||
 				eInputActionOrigins.Take(n).Any(origin => eInputActionOriginToKeyInputMap.TryGetValue(
 					SteamInput.TranslateActionOrigin(BestSteamInputType, origin), out value)) ||
@@ -869,29 +871,29 @@ namespace GamepadSupportPlugin
 			InputHandle_t inputHandle_t,
 			InputActionSetHandle_t actionSetHandle,
 			Steamworks.EInputActionOrigin[] eInputActionOrigins,
-			ref GameInput2.KeyType[] ___keyTypes,
+			ref KeyType[] ___keyTypes,
 			InputDigitalActionHandle_t ___m_actionHandle_t);
 
 		internal static bool MyDigitalActionHandle_InitKeyType_prefix(
 			InputHandle_t inputHandle_t,
 			InputActionSetHandle_t actionSetHandle,
 			Steamworks.EInputActionOrigin[] eInputActionOrigins,
-			ref GameInput2.KeyType[] ___keyTypes,
+			ref KeyType[] ___keyTypes,
 			InputDigitalActionHandle_t ___m_actionHandle_t)
 		{
 			if (___keyTypes == null)
-				___keyTypes = new GameInput2.KeyType[1];
+				___keyTypes = new KeyType[1];
 			// Patch 1: make sure to set this to -1 if it isn't set
 			// to a valid value. The official code leaves it with the
 			// value of 0 if an origin exists but is unrecognized.
-			___keyTypes[0] = (GameInput2.KeyType)(-1);
+			___keyTypes[0] = (KeyType)(-1);
 
 			// Patch 2: check *all* origins to see if
 			// we recognize any, not just the first one.
 			int n = SteamInput.GetDigitalActionOrigins(inputHandle_t, actionSetHandle, ___m_actionHandle_t, eInputActionOrigins);
 			if (n != 0)
 			{
-				var eInputActionOriginToKeyInputMap = (Dictionary<Steamworks.EInputActionOrigin, GameInput2.KeyType[]>)AccessTools.Field(typeof(SteamGamePad), "eInputActionOriginToKeyInputMap").GetValue(null);
+				var eInputActionOriginToKeyInputMap = (Dictionary<Steamworks.EInputActionOrigin, KeyType[]>)AccessTools.Field(typeof(SteamGamePad), "eInputActionOriginToKeyInputMap").GetValue(null);
 				// Patch 3: handle newer origins
 				if (TryMapInputActionOrigin(eInputActionOriginToKeyInputMap, eInputActionOrigins, n, out var value))
 					___keyTypes[0] = value[0];
@@ -904,7 +906,7 @@ namespace GamepadSupportPlugin
 			InputHandle_t inputHandle_t,
 			InputActionSetHandle_t actionSetHandle,
 			Steamworks.EInputActionOrigin[] eInputActionOrigins,
-			ref GameInput2.KeyType[] ___keyTypes,
+			ref KeyType[] ___keyTypes,
 			ActionHandleType ___m_actionHandleType,
 			InputAnalogActionHandle_t ___m_actionHandle_t);
 
@@ -912,26 +914,26 @@ namespace GamepadSupportPlugin
 			InputHandle_t inputHandle_t,
 			InputActionSetHandle_t actionSetHandle,
 			Steamworks.EInputActionOrigin[] eInputActionOrigins,
-			ref GameInput2.KeyType[] ___keyTypes,
+			ref KeyType[] ___keyTypes,
 			ActionHandleType ___m_actionHandleType,
 			InputAnalogActionHandle_t ___m_actionHandle_t)
 		{
 			if (___keyTypes == null)
 			{
 				if (___m_actionHandleType == ActionHandleType.LStick || ___m_actionHandleType == ActionHandleType.RStick)
-					___keyTypes = new GameInput2.KeyType[4];
+					___keyTypes = new KeyType[4];
 				else
-					___keyTypes = new GameInput2.KeyType[1];
+					___keyTypes = new KeyType[1];
 			}
 			for (int i = 0; i < ___keyTypes.Length; i++)
-				___keyTypes[i] = (GameInput2.KeyType)(-1);
+				___keyTypes[i] = (KeyType)(-1);
 
 			// Patch 1: check *all* origins to see if
 			// we recognize any, not just the first one.
 			int n = SteamInput.GetAnalogActionOrigins(inputHandle_t, actionSetHandle, ___m_actionHandle_t, eInputActionOrigins);
 			if (n != 0)
 			{
-				var eInputActionOriginToKeyInputMap = (Dictionary<Steamworks.EInputActionOrigin, GameInput2.KeyType[]>)AccessTools.Field(typeof(SteamGamePad), "eInputActionOriginToKeyInputMap").GetValue(null);
+				var eInputActionOriginToKeyInputMap = (Dictionary<Steamworks.EInputActionOrigin, KeyType[]>)AccessTools.Field(typeof(SteamGamePad), "eInputActionOriginToKeyInputMap").GetValue(null);
 				// Patch 2: handle newer origins
 				if (TryMapInputActionOrigin(eInputActionOriginToKeyInputMap, eInputActionOrigins, n, out var value))
 				{
@@ -946,45 +948,45 @@ namespace GamepadSupportPlugin
 		[HarmonyPatch(typeof(SteamGamePad), "InitKeyTypes")]
 		[HarmonyPostfix]
 		static void InitKeyTypes_postfix(
-			Dictionary<GameInput2.InputType, GameInput2.KeyType> ___defaultInputTypeToKeyTypeMap,
+			Dictionary<InputType, KeyType> ___defaultInputTypeToKeyTypeMap,
 			object[] ___myActionHandleBases)
 		{
 			var typeofMyActionHandleBase = AccessTools.Inner(typeof(SteamGamePad), "MyActionHandleBase");
 			var GetKeyType = AccessTools.Method(typeofMyActionHandleBase, "GetKeyType").GetFastDelegate();
-			var KeyTypes = AccessTools.FieldRefAccess<GameInput2.KeyType[]>(typeofMyActionHandleBase, "keyTypes");
-			for (GameInput2.InputType input = 0; input < GameInput2.InputType.Max; input++)
+			var KeyTypes = AccessTools.FieldRefAccess<KeyType[]>(typeofMyActionHandleBase, "keyTypes");
+			for (InputType input = 0; input < InputType.Max; input++)
 			{
 				int index = 0;
 				switch (input)
 				{
-					case GameInput2.InputType.LStickUp:
+					case InputType.LStickUp:
 						index = 0;
 						break;
-					case GameInput2.InputType.LStickDown:
+					case InputType.LStickDown:
 						index = 1;
 						break;
-					case GameInput2.InputType.LStickRight:
+					case InputType.LStickRight:
 						index = 3;
 						break;
-					case GameInput2.InputType.LStickLeft:
+					case InputType.LStickLeft:
 						index = 2;
 						break;
-					case GameInput2.InputType.RStickUp:
+					case InputType.RStickUp:
 						index = 0;
 						break;
-					case GameInput2.InputType.RStickDown:
+					case InputType.RStickDown:
 						index = 1;
 						break;
-					case GameInput2.InputType.RStickRight:
+					case InputType.RStickRight:
 						index = 3;
 						break;
-					case GameInput2.InputType.RStickLeft:
+					case InputType.RStickLeft:
 						index = 2;
 						break;
 				}
 				var myActionHandle = ___myActionHandleBases[(int)DefaultInputTypeToActionHandleTypeMap[input]];
-				var keyType = (GameInput2.KeyType)GetKeyType(myActionHandle, index);
-				if (keyType == (GameInput2.KeyType)(-1))
+				var keyType = (KeyType)GetKeyType(myActionHandle, index);
+				if (keyType == (KeyType)(-1))
 				{
 					var keyTypes = KeyTypes(myActionHandle);
 					if (index < keyTypes.Length)
@@ -1040,7 +1042,7 @@ namespace GamepadSupportPlugin
 
 		[HarmonyPatch(typeof(SurvivorDefine), "GetGamepadButtonKeyTypeFromEmojiStr")]
 		[HarmonyPrefix]
-		static void GetGamepadButtonKeyTypeFromEmojiStr_prefix(Dictionary<string, GameInput2.KeyType> ___emojiStrToGamepadButtonKeyTypeStrMap)
+		static void GetGamepadButtonKeyTypeFromEmojiStr_prefix(Dictionary<string, KeyType> ___emojiStrToGamepadButtonKeyTypeStrMap)
 		{
 			if (___emojiStrToGamepadButtonKeyTypeStrMap.ContainsKey("<sprite index=28>"))
 			{
@@ -1065,14 +1067,14 @@ namespace GamepadSupportPlugin
 
 		[HarmonyPatch(typeof(SurvivorDefine), "GetEmojiStrFromGamepadButtonKeyType")]
 		[HarmonyPrefix]
-		static void GetEmojiStrFromGamepadButtonKeyType_prefix(Dictionary<GameInput2.KeyType, string> ___gamepadButtonKeyTypeToEmojiStrMapSwitch)
+		static void GetEmojiStrFromGamepadButtonKeyType_prefix(Dictionary<KeyType, string> ___gamepadButtonKeyTypeToEmojiStrMapSwitch)
 		{
-			if (___gamepadButtonKeyTypeToEmojiStrMapSwitch[GameInput2.KeyType.GamePad_B] == "<sprite index=20>")
+			if (___gamepadButtonKeyTypeToEmojiStrMapSwitch[KeyType.GamePad_B] == "<sprite index=20>")
 			{
-				___gamepadButtonKeyTypeToEmojiStrMapSwitch[GameInput2.KeyType.GamePad_A] = "<sprite index=20>";
-				___gamepadButtonKeyTypeToEmojiStrMapSwitch[GameInput2.KeyType.GamePad_B] = "<sprite index=21>";
-				___gamepadButtonKeyTypeToEmojiStrMapSwitch[GameInput2.KeyType.GamePad_Y] = "<sprite index=22>";
-				___gamepadButtonKeyTypeToEmojiStrMapSwitch[GameInput2.KeyType.GamePad_X] = "<sprite index=23>";
+				___gamepadButtonKeyTypeToEmojiStrMapSwitch[KeyType.GamePad_A] = "<sprite index=20>";
+				___gamepadButtonKeyTypeToEmojiStrMapSwitch[KeyType.GamePad_B] = "<sprite index=21>";
+				___gamepadButtonKeyTypeToEmojiStrMapSwitch[KeyType.GamePad_Y] = "<sprite index=22>";
+				___gamepadButtonKeyTypeToEmojiStrMapSwitch[KeyType.GamePad_X] = "<sprite index=23>";
 			}
 		}
 
@@ -1081,7 +1083,7 @@ namespace GamepadSupportPlugin
 		static void GetEmojiStrFromGamepadButtonKeyType_postfix(
 			ref string __result,
 			GamePadDeviceType gamePadDeviceType,
-			GameInput2.KeyType gamepadKeyType)
+			KeyType gamepadKeyType)
 		{
 			switch (gamePadDeviceType)
 			{
@@ -1152,21 +1154,21 @@ namespace GamepadSupportPlugin
 			}
 		}
 
-		internal static void GetTextSpineObjSkinSkinName_prefix(Dictionary<GameInput2.KeyType, string> ___steamPS4SkinNameMap)
+		internal static void GetTextSpineObjSkinSkinName_prefix(Dictionary<KeyType, string> ___steamPS4SkinNameMap)
 		{
-			if (___steamPS4SkinNameMap[GameInput2.KeyType.GamePad_A] == "ps_A")
+			if (___steamPS4SkinNameMap[KeyType.GamePad_A] == "ps_A")
 			{
-				___steamPS4SkinNameMap[GameInput2.KeyType.GamePad_A] = "ps_B";
-				___steamPS4SkinNameMap[GameInput2.KeyType.GamePad_B] = "ps_A";
+				___steamPS4SkinNameMap[KeyType.GamePad_A] = "ps_B";
+				___steamPS4SkinNameMap[KeyType.GamePad_B] = "ps_A";
 			}
 		}
 
-		internal static string GetTextSpineObjSkinSkinName_postfix(string __result, Dictionary<GameInput2.KeyType, string> ___steamSwitchSkinNameMap)
+		internal static string GetTextSpineObjSkinSkinName_postfix(string __result, Dictionary<KeyType, string> ___steamSwitchSkinNameMap)
 		{
 			switch (GameInput2.GetGamePadType())
 			{
 				case JoyConGamePadDeviceType:
-					var key = GameInput2.GetGamePadButtonKeyType(GameInput2.InputType.Decide);
+					var key = GameInput2.GetGamePadButtonKeyType(InputType.Decide);
 					return ___steamSwitchSkinNameMap.GetValueSafe(key) ?? "";
 
 					// the rest are like Xbox
@@ -1195,7 +1197,7 @@ namespace GamepadSupportPlugin
 		{
 			var typeofGamepadConfigWindowState = AccessTools.Inner(typeof(SteamSettingGamepadConfigWindow), "GamepadConfigWindowState");
 			//var myLogSource = BepInEx.Logging.Logger.CreateLogSource("SteamInput");
-			//myLogSource.LogInfo($"New state: {__result}. GetAnyButtonDown: {GameInput2.GetAnyButtonDown()}. Decide pushed: {AccessTools.Method(typeof(GameInput2), "GetSteamGamePadPush").Invoke(GameInput2.GetInstance(), new object[] { GameInput2.InputType.Decide })}");
+			//myLogSource.LogInfo($"New state: {__result}. GetAnyButtonDown: {GameInput2.GetAnyButtonDown()}. Decide pushed: {AccessTools.Method(typeof(GameInput2), "GetSteamGamePadPush").Invoke(GameInput2.GetInstance(), new object[] { InputType.Decide })}");
 			if (__result.Equals(AccessTools.Field(typeofGamepadConfigWindowState, "KeyInputButtonAction").GetValue(null)))
 			{
 				var gamePadDevice = (SteamGamePad)AccessTools.Field(typeof(GameInput2), "gamePadDevice").GetValue(GameInput2.GetInstance());
