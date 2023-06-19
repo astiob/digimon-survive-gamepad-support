@@ -17,6 +17,73 @@ namespace GamepadSupportPlugin
 {
 	static class Patches
 	{
+		static readonly Dictionary<GameInput2.KeyType, string> steamControllerTextureNameMap = new Dictionary<GameInput2.KeyType, string>
+		{
+			{ GameInput2.KeyType.GamePad_A, "xb_button_02" },
+			{ GameInput2.KeyType.GamePad_B, "xb_button_01" },
+			{ GameInput2.KeyType.GamePad_X, "xb_button_03" },
+			{ GameInput2.KeyType.GamePad_Y, "xb_button_04" },
+			// The shape isn't right, but it's the best we've got
+			{ GameInput2.KeyType.GamePad_L1, "xb_button_05" },
+			// The shape isn't right, but it's the best we've got
+			{ GameInput2.KeyType.GamePad_R1, "xb_button_06" },
+			// The shape isn't right, but it's the best we've got
+			{ GameInput2.KeyType.GamePad_L2, "xb_button_07" },
+			// The shape isn't right, but it's the best we've got
+			{ GameInput2.KeyType.GamePad_R2, "xb_button_08" },
+			{ GameInput2.KeyType.GamePad_Up, "xb_button_13" },
+			{ GameInput2.KeyType.GamePad_Down, "xb_button_15" },
+			{ GameInput2.KeyType.GamePad_Left, "xb_button_16" },
+			{ GameInput2.KeyType.GamePad_Right, "xb_button_17" },
+			{ GameInput2.KeyType.GamePad_RStickUp, "ps_button_28" },
+			{ GameInput2.KeyType.GamePad_RStickDown, "ps_button_29" },
+			{ GameInput2.KeyType.GamePad_RStickLeft, "ps_button_30" },
+			{ GameInput2.KeyType.GamePad_RStickRight, "ps_button_31" },
+			{ GameInput2.KeyType.GamePad_LStickUp, "xb_button_20" },
+			{ GameInput2.KeyType.GamePad_LStickDown, "xb_button_21" },
+			{ GameInput2.KeyType.GamePad_LStickLeft, "xb_button_22" },
+			{ GameInput2.KeyType.GamePad_LStickRight, "xb_button_23" },
+			// There's no suitable sprite, so use the least confusing one: this at least matches the name in the game's default Steam controller settings
+			{ GameInput2.KeyType.GamePad_Start, "xb_button_12" },
+			// There's no suitable sprite, so use the least confusing one: this at least matches the name in the game's default Steam controller settings
+			{ GameInput2.KeyType.GamePad_Select, "xb_button_11" },
+			{ GameInput2.KeyType.GamePad_L3, "xb_button_09" },
+			{ GameInput2.KeyType.GamePad_R3, "ps_button_10" },
+			{ GameInput2.KeyType.GamePad_L3DI, "xb_button_09" },
+			{ GameInput2.KeyType.GamePad_R3DI, "ps_button_10" },
+			// Left trackpad
+			//{ GameInput2.KeyType.NpadButton_StickLUp, "ps_button_22" },
+			//{ GameInput2.KeyType.NpadButton_StickLDown, "ps_button_23" },
+			//{ GameInput2.KeyType.NpadButton_StickLLeft, "ps_button_24" },
+			//{ GameInput2.KeyType.NpadButton_StickLRight, "ps_button_25" },
+			//{ GameInput2.KeyType.NpadButton_StickL, "ps_button_15" },
+		};
+		static readonly string[][] steamControllerDirectionInputTextureNames =
+		{
+			new string[3] { "xb_button_14", "xb_button_18", "xb_button_19" },
+			new string[3] { "xb_button_24", "xb_button_25", "xb_button_09" },
+			new string[3] { "ps_button_32", "ps_button_33", "ps_button_10" },
+		};
+		static readonly Dictionary<GameInput2.KeyType, string> gamepadButtonKeyTypeToEmojiStrMapSteamController = new Dictionary<GameInput2.KeyType, string>
+		{
+			{ GameInput2.KeyType.GamePad_B, "<sprite index=32>" },
+			{ GameInput2.KeyType.GamePad_A, "<sprite index=33>" },
+			{ GameInput2.KeyType.GamePad_X, "<sprite index=34>" },
+			{ GameInput2.KeyType.GamePad_Y, "<sprite index=35>" },
+			{ GameInput2.KeyType.GamePad_L1, "<sprite index=36>" },
+			{ GameInput2.KeyType.GamePad_R1, "<sprite index=37>" },
+			{ GameInput2.KeyType.GamePad_L2, "<sprite index=38>" },
+			{ GameInput2.KeyType.GamePad_R2, "<sprite index=39>" },
+			{ GameInput2.KeyType.GamePad_L3, "<sprite index=40>" },
+			{ GameInput2.KeyType.GamePad_R3, "<sprite index=17>" },
+			{ GameInput2.KeyType.GamePad_Select, "<sprite index=128>" },
+		};
+		static readonly Dictionary<string, string> stickAndDpadEmojiForSteamController = new Dictionary<string, string> {
+			// PS4's right stick
+			{ "<sprite index=29>", "<sprite index=17>" },
+			{ "<sprite index=41>", "<sprite index=17>" },
+		};
+
 		static readonly Dictionary<GameInput2.KeyType, string> joyConTextureNameMap = new Dictionary<GameInput2.KeyType, string>
 		{
 			{ GameInput2.KeyType.GamePad_A, "sw_button_19" },
@@ -234,73 +301,6 @@ namespace GamepadSupportPlugin
 			{ "<sprite index=94>", "<sprite index=97>" },
 			{ "<sprite index=95>", "<sprite index=98>" },
 			{ "<sprite index=96>", "<sprite index=99>" },
-		};
-
-		static readonly Dictionary<GameInput2.KeyType, string> steamControllerTextureNameMap = new Dictionary<GameInput2.KeyType, string>
-		{
-			{ GameInput2.KeyType.GamePad_A, "xb_button_02" },
-			{ GameInput2.KeyType.GamePad_B, "xb_button_01" },
-			{ GameInput2.KeyType.GamePad_X, "xb_button_03" },
-			{ GameInput2.KeyType.GamePad_Y, "xb_button_04" },
-			// The shape isn't right, but it's the best we've got
-			{ GameInput2.KeyType.GamePad_L1, "xb_button_05" },
-			// The shape isn't right, but it's the best we've got
-			{ GameInput2.KeyType.GamePad_R1, "xb_button_06" },
-			// The shape isn't right, but it's the best we've got
-			{ GameInput2.KeyType.GamePad_L2, "xb_button_07" },
-			// The shape isn't right, but it's the best we've got
-			{ GameInput2.KeyType.GamePad_R2, "xb_button_08" },
-			{ GameInput2.KeyType.GamePad_Up, "xb_button_13" },
-			{ GameInput2.KeyType.GamePad_Down, "xb_button_15" },
-			{ GameInput2.KeyType.GamePad_Left, "xb_button_16" },
-			{ GameInput2.KeyType.GamePad_Right, "xb_button_17" },
-			{ GameInput2.KeyType.GamePad_RStickUp, "ps_button_28" },
-			{ GameInput2.KeyType.GamePad_RStickDown, "ps_button_29" },
-			{ GameInput2.KeyType.GamePad_RStickLeft, "ps_button_30" },
-			{ GameInput2.KeyType.GamePad_RStickRight, "ps_button_31" },
-			{ GameInput2.KeyType.GamePad_LStickUp, "xb_button_20" },
-			{ GameInput2.KeyType.GamePad_LStickDown, "xb_button_21" },
-			{ GameInput2.KeyType.GamePad_LStickLeft, "xb_button_22" },
-			{ GameInput2.KeyType.GamePad_LStickRight, "xb_button_23" },
-			// There's no suitable sprite, so use the least confusing one: this at least matches the name in the game's default Steam controller settings
-			{ GameInput2.KeyType.GamePad_Start, "xb_button_12" },
-			// There's no suitable sprite, so use the least confusing one: this at least matches the name in the game's default Steam controller settings
-			{ GameInput2.KeyType.GamePad_Select, "xb_button_11" },
-			{ GameInput2.KeyType.GamePad_L3, "xb_button_09" },
-			{ GameInput2.KeyType.GamePad_R3, "ps_button_10" },
-			{ GameInput2.KeyType.GamePad_L3DI, "xb_button_09" },
-			{ GameInput2.KeyType.GamePad_R3DI, "ps_button_10" },
-			// Left trackpad
-			//{ GameInput2.KeyType.NpadButton_StickLUp, "ps_button_22" },
-			//{ GameInput2.KeyType.NpadButton_StickLDown, "ps_button_23" },
-			//{ GameInput2.KeyType.NpadButton_StickLLeft, "ps_button_24" },
-			//{ GameInput2.KeyType.NpadButton_StickLRight, "ps_button_25" },
-			//{ GameInput2.KeyType.NpadButton_StickL, "ps_button_15" },
-		};
-		static readonly string[][] steamControllerDirectionInputTextureNames =
-		{
-			new string[3] { "xb_button_14", "xb_button_18", "xb_button_19" },
-			new string[3] { "xb_button_24", "xb_button_25", "xb_button_09" },
-			new string[3] { "ps_button_32", "ps_button_33", "ps_button_10" },
-		};
-		static readonly Dictionary<GameInput2.KeyType, string> gamepadButtonKeyTypeToEmojiStrMapSteamController = new Dictionary<GameInput2.KeyType, string>
-		{
-			{ GameInput2.KeyType.GamePad_B, "<sprite index=32>" },
-			{ GameInput2.KeyType.GamePad_A, "<sprite index=33>" },
-			{ GameInput2.KeyType.GamePad_X, "<sprite index=34>" },
-			{ GameInput2.KeyType.GamePad_Y, "<sprite index=35>" },
-			{ GameInput2.KeyType.GamePad_L1, "<sprite index=36>" },
-			{ GameInput2.KeyType.GamePad_R1, "<sprite index=37>" },
-			{ GameInput2.KeyType.GamePad_L2, "<sprite index=38>" },
-			{ GameInput2.KeyType.GamePad_R2, "<sprite index=39>" },
-			{ GameInput2.KeyType.GamePad_L3, "<sprite index=40>" },
-			{ GameInput2.KeyType.GamePad_R3, "<sprite index=17>" },
-			{ GameInput2.KeyType.GamePad_Select, "<sprite index=128>" },
-		};
-		static readonly Dictionary<string, string> stickAndDpadEmojiForSteamController = new Dictionary<string, string> {
-			// PS4's right stick
-			{ "<sprite index=29>", "<sprite index=17>" },
-			{ "<sprite index=41>", "<sprite index=17>" },
 		};
 
 		// Random int values to avoid clashing with the base game and other mods
