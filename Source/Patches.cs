@@ -429,10 +429,10 @@ namespace GamepadSupportPlugin
 		static void SteamGamePad_preconstruct(Dictionary<Steamworks.EInputActionOrigin, GameInput2.KeyType[]> ___eInputActionOriginToKeyInputMap)
 		{
 			// Single Switch JoyCon
-			___eInputActionOriginToKeyInputMap[Steamworks.EInputActionOrigin.k_EInputActionOrigin_Switch_Reserved12] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_A };
-			___eInputActionOriginToKeyInputMap[Steamworks.EInputActionOrigin.k_EInputActionOrigin_Switch_Reserved13] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_B };
-			___eInputActionOriginToKeyInputMap[Steamworks.EInputActionOrigin.k_EInputActionOrigin_Switch_Reserved11] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_X };
-			___eInputActionOriginToKeyInputMap[Steamworks.EInputActionOrigin.k_EInputActionOrigin_Switch_Reserved14] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_Y };
+			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_Switch_JoyConButton_E] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_A };
+			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_Switch_JoyConButton_S] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_B };
+			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_Switch_JoyConButton_N] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_X };
+			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_Switch_JoyConButton_W] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_Y };
 
 			// Steam Deck
 			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_A] = new GameInput2.KeyType[1] { GameInput2.KeyType.GamePad_A };

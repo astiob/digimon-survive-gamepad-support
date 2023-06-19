@@ -263,10 +263,10 @@
 		k_EInputActionOrigin_Switch_LeftGrip_Upper, // Left JoyCon SL Button
 		k_EInputActionOrigin_Switch_RightGrip_Lower,  // Right JoyCon SL Button
 		k_EInputActionOrigin_Switch_RightGrip_Upper,  // Right JoyCon SR Button
-		k_EInputActionOrigin_Switch_Reserved11,
-		k_EInputActionOrigin_Switch_Reserved12,
-		k_EInputActionOrigin_Switch_Reserved13,
-		k_EInputActionOrigin_Switch_Reserved14,
+		k_EInputActionOrigin_Switch_JoyConButton_N, // With a Horizontal JoyCon this will be Y or what would be Dpad Right when vertical
+		k_EInputActionOrigin_Switch_JoyConButton_E, // X
+		k_EInputActionOrigin_Switch_JoyConButton_S, // A
+		k_EInputActionOrigin_Switch_JoyConButton_W, // B
 		k_EInputActionOrigin_Switch_Reserved15,
 		k_EInputActionOrigin_Switch_Reserved16,
 		k_EInputActionOrigin_Switch_Reserved17,
@@ -330,10 +330,10 @@
 		k_EInputActionOrigin_PS5_Gyro_Yaw,
 		k_EInputActionOrigin_PS5_Gyro_Roll,
 		k_EInputActionOrigin_PS5_DPad_Move,
-		k_EInputActionOrigin_PS5_Reserved1,
-		k_EInputActionOrigin_PS5_Reserved2,
-		k_EInputActionOrigin_PS5_Reserved3,
-		k_EInputActionOrigin_PS5_Reserved4,
+		k_EInputActionOrigin_PS5_LeftGrip,
+		k_EInputActionOrigin_PS5_RightGrip,
+		k_EInputActionOrigin_PS5_LeftFn,
+		k_EInputActionOrigin_PS5_RightFn,
 		k_EInputActionOrigin_PS5_Reserved5,
 		k_EInputActionOrigin_PS5_Reserved6,
 		k_EInputActionOrigin_PS5_Reserved7,
