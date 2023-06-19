@@ -80,7 +80,8 @@ namespace GamepadSupportPlugin
 			{ KeyType.GamePad_R3, "<sprite index=17>" },
 			{ KeyType.GamePad_Select, "<sprite index=128>" },
 		};
-		static readonly Dictionary<string, string> stickAndDpadEmojiForSteamController = new Dictionary<string, string> {
+		static readonly Dictionary<string, string> stickAndDpadEmojiForSteamController = new Dictionary<string, string>
+		{
 			// PS4's right stick
 			{ "<sprite index=29>", "<sprite index=17>" },
 			{ "<sprite index=41>", "<sprite index=17>" },
@@ -146,7 +147,8 @@ namespace GamepadSupportPlugin
 			{ KeyType.GamePad_R3, "<sprite index=29>" },
 			{ KeyType.GamePad_Select, "<sprite index=129>" },
 		};
-		static readonly Dictionary<string, string> stickAndDpadEmojiForJoyCon = new Dictionary<string, string> {
+		static readonly Dictionary<string, string> stickAndDpadEmojiForJoyCon = new Dictionary<string, string>
+		{
 			// Switch's sticks
 			{ "<sprite index=16>", "<sprite index=28>" },
 			{ "<sprite index=17>", "<sprite index=29>" },
@@ -210,7 +212,8 @@ namespace GamepadSupportPlugin
 			new string[3] { "ps_button_26", "ps_button_27", "ps_button_09" },
 			new string[3] { "ps_button_32", "ps_button_33", "ps_button_10" },
 		};
-		static readonly Dictionary<string, string> stickAndDpadEmojiForMobileTouch = new Dictionary<string, string> {
+		static readonly Dictionary<string, string> stickAndDpadEmojiForMobileTouch = new Dictionary<string, string>
+		{
 			// PS4's sticks
 			{ "<sprite index=28>", "<sprite index=16>" },
 			{ "<sprite index=29>", "<sprite index=17>" },
@@ -284,7 +287,8 @@ namespace GamepadSupportPlugin
 			{ KeyType.GamePad_R3, "<sprite index=127>" },
 			{ KeyType.GamePad_Select, "<sprite index=128>" },
 		};
-		static readonly Dictionary<string, string> stickAndDpadEmojiForSteamDeck = new Dictionary<string, string> {
+		static readonly Dictionary<string, string> stickAndDpadEmojiForSteamDeck = new Dictionary<string, string>
+		{
 			// PS4's sticks
 			{ "<sprite index=28>", "<sprite index=16>" },
 			{ "<sprite index=29>", "<sprite index=17>" },
