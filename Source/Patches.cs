@@ -683,13 +683,30 @@ namespace GamepadSupportPlugin
 #endif
 		}
 
+		class MultidimensionalEqualityComparer : IEqualityComparer<EInputActionOrigin[,]>
+		{
+			public bool Equals(EInputActionOrigin[,] x, EInputActionOrigin[,] y)
+			{
+				return x.Cast<EInputActionOrigin>().SequenceEqual(y.Cast<EInputActionOrigin>());
+			}
+
+			public int GetHashCode(EInputActionOrigin[,] actionOrigins)
+			{
+				var hashCode = new HashCode();
+				foreach (var actionOrigin in actionOrigins)
+					hashCode.Add(actionOrigin);
+				return hashCode.ToHashCode();
+			}
+		}
+		static readonly MultidimensionalEqualityComparer multidimensionalEqualityComparer = new MultidimensionalEqualityComparer();
+
 #if !SILENT
 		class GamePadConfigurationSnapshot
 		{
 			public int connectedControllers;
 			public ESteamInputType[] inputTypes;
 			public uint[] remotePlaySessionIds;
-			public EInputActionOrigin[,,] actionOrigins;
+			public EInputActionOrigin[][,] actionOrigins;
 
 			public override bool Equals(object obj)
 			{
@@ -702,7 +719,7 @@ namespace GamepadSupportPlugin
 					&& connectedControllers == other.connectedControllers
 					&& inputTypes.SequenceEqual(other.inputTypes)
 					&& remotePlaySessionIds.SequenceEqual(other.remotePlaySessionIds)
-					&& actionOrigins.Cast<EInputActionOrigin>().SequenceEqual(other.actionOrigins.Cast<EInputActionOrigin>());
+					&& actionOrigins.SequenceEqual(other.actionOrigins, multidimensionalEqualityComparer);
 			}
 
 			public override int GetHashCode()
@@ -713,14 +730,17 @@ namespace GamepadSupportPlugin
 					hashCode.Add(inputType);
 				foreach (var remotePlaySessionId in remotePlaySessionIds)
 					hashCode.Add(remotePlaySessionId);
-				foreach (var actionOrigin in actionOrigins)
-					hashCode.Add(actionOrigin);
+				foreach (var actionOriginSlice in actionOrigins)
+					foreach (var actionOrigin in actionOriginSlice)
+						hashCode.Add(actionOrigin);
 				return hashCode.ToHashCode();
 			}
 		}
 
 		static GamePadConfigurationSnapshot lastGamePadConfiguration = null;
 #endif
+
+		static EInputActionOrigin[,] lastActionOrigins = null;
 
 		enum GamePadDevicePriority
 		{
@@ -753,14 +773,15 @@ namespace GamepadSupportPlugin
 				connectedControllers = connectedControllers,
 				inputTypes = new ESteamInputType[connectedControllers],
 				remotePlaySessionIds = new uint[connectedControllers],
-				actionOrigins = new EInputActionOrigin[connectedControllers, ___ActionHandleNames.Length, Constants.STEAM_INPUT_MAX_ORIGINS],
+				actionOrigins = new EInputActionOrigin[connectedControllers][,],
 			};
 #endif
 
 			bool foundRemote = false;
 			GamePadDevicePriority foundPriority = GamePadDevicePriority.NONE;
-			InputHandle_t foundInputHandle = default(InputHandle_t);
-			___gamePadType = GamePadDeviceType.NONE;
+			InputHandle_t foundInputHandle = default;
+			EInputActionOrigin[,] foundActionOrigins = null;
+			GamePadDeviceType foundGamePadType = GamePadDeviceType.NONE;
 			for (int i = 0; i < connectedControllers; i++)
 			{
 				GamePadDeviceType gamePadDeviceType;
@@ -838,6 +859,7 @@ namespace GamepadSupportPlugin
 				// genuinely shares its hardware with paired Joy-Con; so we
 				// still need to check both the origins and the type and be
 				// careful about which origins can override the type here.
+				var actionOrigins = new EInputActionOrigin[___ActionHandleNames.Length, Constants.STEAM_INPUT_MAX_ORIGINS];
 				for (int j = 0; j < ___ActionHandleNames.Length; j++)
 				{
 					int n;
@@ -851,10 +873,8 @@ namespace GamepadSupportPlugin
 						var actionHandle = SteamInput.GetDigitalActionHandle(___ActionHandleNames[j]);
 						n = SteamInput.GetDigitalActionOrigins(inputHandle, actionSetHandle, actionHandle, ___m_eInputActionOrigins);
 					}
-#if !SILENT
 					for (int k = 0; k < n; k++)
-						gamePadConfiguration.actionOrigins[i, j, k] = (EInputActionOrigin)___m_eInputActionOrigins[k];
-#endif
+						actionOrigins[j, k] = (EInputActionOrigin)___m_eInputActionOrigins[k];
 
 					for (int k = 0; k < n; k++)
 					{
@@ -865,44 +885,54 @@ namespace GamepadSupportPlugin
 							{
 								gamePadDeviceType = SteamDeckGamePadDeviceType;
 								priority = GamePadDevicePriority.BUILTIN_HARDWARE;
-#if SILENT
-								goto actionHandlesInspected;
-#endif
 							}
 							else if (origin >= EInputActionOrigin.k_EInputActionOrigin_PS4_X && origin <= EInputActionOrigin.k_EInputActionOrigin_PS4_Reserved10
 								|| origin >= EInputActionOrigin.k_EInputActionOrigin_PS5_X && origin <= EInputActionOrigin.k_EInputActionOrigin_PS5_Reserved20)
 							{
 								gamePadDeviceType = GamePadDeviceType.PS4;
 								priority = GamePadDevicePriority.EXPLICITLY_SUPPORTED;
-#if SILENT
-								goto actionHandlesInspected;
-#endif
 							}
 							break;
 						}
 					}
 				}
 
-#if SILENT
-			actionHandlesInspected:
-				;
+#if !SILENT
+				gamePadConfiguration.actionOrigins[i] = actionOrigins;
 #endif
 
 				if (isRemote && !foundRemote || isRemote == foundRemote && priority < foundPriority)
 				{
-					___gamePadType = gamePadDeviceType;
+					foundGamePadType = gamePadDeviceType;
 					foundInputHandle = inputHandle;
 					foundRemote = isRemote;
 					foundPriority = priority;
+					foundActionOrigins = actionOrigins;
 #if SILENT
 					if (isRemote && priority == GamePadDevicePriority.EXPLICITLY_SUPPORTED)
 						break;
 #endif
 				}
 			}
-			if (!___isInitalized || !___inputHandle_t.Equals(foundInputHandle))
+			if (foundGamePadType != GamePadDeviceType.NONE && ___gamePadType == foundGamePadType &&
+				!multidimensionalEqualityComparer.Equals(lastActionOrigins, foundActionOrigins))
 			{
+				// Force all input prompts to be redrawn.
+				// The way we achieve this is a bit of an ugly hack, as the game
+				// switches to keyboard prompts for an awfully long split second.
+				// It would be better to find & patch all instances of code like this:
+				//     GamePadDevice.GamePadDeviceType gamePadType = GameInput2.GetGamePadType();
+				//     if (gamePadDeviceType == gamePadType) return;
+				___gamePadType = GamePadDeviceType.NONE;
+				___inputHandle_t = default;
+				lastActionOrigins = null;
+				AccessTools.Method(typeof(SteamGamePad), "InitSteamInputInitActionHandle").Invoke(__instance, null);
+			}
+			else if (!___isInitalized || !___inputHandle_t.Equals(foundInputHandle))
+			{
+				___gamePadType = foundGamePadType;
 				___inputHandle_t = foundInputHandle;
+				lastActionOrigins = foundActionOrigins;
 				AccessTools.Method(typeof(SteamGamePad), "InitSteamInputInitActionHandle").Invoke(__instance, null);
 			}
 
@@ -932,14 +962,14 @@ namespace GamepadSupportPlugin
 					for (int j = 0; j < ___ActionHandleNames.Length; j++)
 					{
 						var n = Constants.STEAM_INPUT_MAX_ORIGINS;
-						while (n > 0 && gamePadConfiguration.actionOrigins[i, j, n - 1] == EInputActionOrigin.k_EInputActionOrigin_None)
+						while (n > 0 && gamePadConfiguration.actionOrigins[i][j, n - 1] == EInputActionOrigin.k_EInputActionOrigin_None)
 							--n;
 						var builder = new StringBuilder($"  action \"{___ActionHandleNames[j]}\" has {n} origin");
 						if (n != 1)
 							builder.Append('s');
 						for (int k = 0; k < n; k++)
 						{
-							var origin = gamePadConfiguration.actionOrigins[i, j, k];
+							var origin = gamePadConfiguration.actionOrigins[i][j, k];
 							builder.Append(k == 0 ? ": " : ", ");
 							if (origin < EInputActionOrigin.k_EInputActionOrigin_Count)
 								builder.Append(origin);
