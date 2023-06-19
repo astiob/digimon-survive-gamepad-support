@@ -106,6 +106,78 @@ namespace GamepadSupportPlugin
 			{ KeyType.GamePad_Select, "xbox_V" },
 		};
 
+		static readonly Dictionary<KeyType, string> switchProTextureNameMap = new Dictionary<KeyType, string>
+		{
+			{ KeyType.GamePad_A, "sw_button_01" },
+			{ KeyType.GamePad_B, "sw_button_02" },
+			{ KeyType.GamePad_X, "sw_button_04" },
+			{ KeyType.GamePad_Y, "sw_button_03" },
+			{ KeyType.GamePad_L1, "sw_button_05" },
+			{ KeyType.GamePad_R1, "sw_button_06" },
+			{ KeyType.GamePad_L2, "sw_button_07" },
+			{ KeyType.GamePad_R2, "sw_button_08" },
+			// The Switch Pro Controller has a D-pad that looks like the
+			// Xbox's. The sw_ sprites are for the Joy-Cons, which have
+			// a diamond of separate, round direction buttons instead.
+			// The Xbox's D-pad sprites are very similar to the Switch's
+			// Plus sprite, but showing similar sprites is still better
+			// than showing a button design that the gamepad doesn't have.
+			{ KeyType.GamePad_Up, "xb_button_13" },
+			{ KeyType.GamePad_Down, "xb_button_15" },
+			{ KeyType.GamePad_Left, "xb_button_16" },
+			{ KeyType.GamePad_Right, "xb_button_17" },
+			// The Switch Pro Controller's sticks don't have the extra
+			// notch marks for cardinal directions that the Joy-Cons have,
+			// but Joy-Cons are what the sw_ sprites are for. Use the
+			// notchless "L" and "R" sprites from PS4 instead. Now, for
+			// exploration prompts, only the Joy-Con version exists,
+			// so they'll be distinct from the sprites we select here,
+			// but exploration prompts show only the Decide action
+			// and people rarely assign stick clicks to that,
+			// so I think this is the best solution overall.
+			{ KeyType.GamePad_RStickUp, "ps_button_28" },
+			{ KeyType.GamePad_RStickDown, "ps_button_29" },
+			{ KeyType.GamePad_RStickLeft, "ps_button_30" },
+			{ KeyType.GamePad_RStickRight, "ps_button_31" },
+			{ KeyType.GamePad_LStickUp, "ps_button_22" },
+			{ KeyType.GamePad_LStickDown, "ps_button_23" },
+			{ KeyType.GamePad_LStickLeft, "ps_button_24" },
+			{ KeyType.GamePad_LStickRight, "ps_button_25" },
+			{ KeyType.GamePad_Start, "sw_button_12" },
+			{ KeyType.GamePad_Select, "sw_button_11" },
+			{ KeyType.GamePad_L3, "ps_button_09" },
+			{ KeyType.GamePad_R3, "ps_button_10" },
+			{ KeyType.GamePad_L3DI, "ps_button_09" },
+			{ KeyType.GamePad_R3DI, "ps_button_10" },
+		};
+		static readonly string[][] switchProDirectionInputTextureNames =
+		{
+			new string[3] { "xb_button_14", "xb_button_18", "xb_button_19" },
+			new string[3] { "ps_button_26", "ps_button_27", "ps_button_09" },
+			new string[3] { "ps_button_32", "ps_button_33", "ps_button_10" },
+		};
+		static readonly Dictionary<string, string> stickAndDpadEmojiForSwitchPro = new Dictionary<string, string>
+		{
+			// PS4's sticks
+			{ "<sprite index=28>", "<sprite index=16>" },
+			{ "<sprite index=29>", "<sprite index=17>" },
+			{ "<sprite index=40>", "<sprite index=16>" },
+			{ "<sprite index=41>", "<sprite index=17>" },
+			// Xbox's D-pad
+			{ "<sprite index=18>", "<sprite index=42>" },
+			{ "<sprite index=19>", "<sprite index=43>" },
+			{ "<sprite index=30>", "<sprite index=42>" },
+			{ "<sprite index=31>", "<sprite index=43>" },
+			{ "<sprite index=44>", "<sprite index=46>" },
+			{ "<sprite index=45>", "<sprite index=46>" },
+			{ "<sprite index=91>", "<sprite index=97>" },
+			{ "<sprite index=92>", "<sprite index=98>" },
+			{ "<sprite index=93>", "<sprite index=99>" },
+			{ "<sprite index=94>", "<sprite index=97>" },
+			{ "<sprite index=95>", "<sprite index=98>" },
+			{ "<sprite index=96>", "<sprite index=99>" },
+		};
+
 		static readonly Dictionary<KeyType, string> joyConTextureNameMap = new Dictionary<KeyType, string>
 		{
 			{ KeyType.GamePad_A, "sw_button_19" },
@@ -344,6 +416,7 @@ namespace GamepadSupportPlugin
 		};
 
 		// Random int values to avoid clashing with the base game and other mods
+		const GamePadDeviceType SwitchProGamePadDeviceType = (GamePadDeviceType)(-8646608);
 		const GamePadDeviceType JoyConGamePadDeviceType = (GamePadDeviceType)1083105190;
 		const GamePadDeviceType MobileTouchGamePadDeviceType = (GamePadDeviceType)2067307885;
 		const GamePadDeviceType SteamDeckGamePadDeviceType = (GamePadDeviceType)(-125593974);
@@ -360,6 +433,8 @@ namespace GamepadSupportPlugin
 			{
 				case GamePadDeviceType.STEAM:
 					return text.ReplaceAll(stickAndDpadEmojiForSteamController);
+				case SwitchProGamePadDeviceType:
+					return text.ReplaceAll(stickAndDpadEmojiForSwitchPro);
 				case JoyConGamePadDeviceType:
 					return text.ReplaceAll(stickAndDpadEmojiForJoyCon);
 				case MobileTouchGamePadDeviceType:
@@ -375,8 +450,9 @@ namespace GamepadSupportPlugin
 		{
 			switch (gamePadDeviceType)
 			{
+				case SwitchProGamePadDeviceType: // (currently effectively a no-op)
 				case JoyConGamePadDeviceType:
-				case MobileTouchGamePadDeviceType:
+				case MobileTouchGamePadDeviceType: // (currently effectively a no-op)
 				case SteamDeckGamePadDeviceType:
 					return new Regex("<sprite index=[^>]*>").Replace(text, m =>
 					{
@@ -408,6 +484,24 @@ namespace GamepadSupportPlugin
 				___directionInputTetureNames[steamControllerTextureNameMapIndex] = steamControllerDirectionInputTextureNames;
 			}
 			return steamControllerTextureNameMapIndex;
+		}
+
+		static int EnsureSwitchProTextureNameMapIndex(
+			ref Dictionary<KeyType, string>[] ___gamePadTextureNameMap,
+			ref string[][][] ___directionInputTetureNames)
+		{
+			int switchProTextureNameMapIndex = Array.IndexOf(___gamePadTextureNameMap, switchProTextureNameMap);
+			if (switchProTextureNameMapIndex == -1)
+			{
+				switchProTextureNameMapIndex = Math.Max(___gamePadTextureNameMap.Length, ___directionInputTetureNames.Length);
+
+				Array.Resize(ref ___gamePadTextureNameMap, switchProTextureNameMapIndex + 1);
+				___gamePadTextureNameMap[switchProTextureNameMapIndex] = switchProTextureNameMap;
+
+				Array.Resize(ref ___directionInputTetureNames, switchProTextureNameMapIndex + 1);
+				___directionInputTetureNames[switchProTextureNameMapIndex] = switchProDirectionInputTextureNames;
+			}
+			return switchProTextureNameMapIndex;
 		}
 
 		static int EnsureJoyConTextureNameMapIndex(
@@ -567,6 +661,9 @@ namespace GamepadSupportPlugin
 				case GamePadDeviceType.STEAM:
 					__result = EnsureSteamControllerTextureNameMapIndex(ref ___gamePadTextureNameMap, ref ___directionInputTetureNames);
 					break;
+				case SwitchProGamePadDeviceType:
+					__result = EnsureSwitchProTextureNameMapIndex(ref ___gamePadTextureNameMap, ref ___directionInputTetureNames);
+					break;
 				case JoyConGamePadDeviceType:
 					__result = EnsureJoyConTextureNameMapIndex(ref ___gamePadTextureNameMap, ref ___directionInputTetureNames);
 					break;
@@ -699,13 +796,16 @@ namespace GamepadSupportPlugin
 					//	priority = LocalGamePadDevicePriority.MOBILE_PHYSICAL;
 					//	break;
 					case ESteamInputType.k_ESteamInputType_SwitchJoyConPair:
-					case ESteamInputType.k_ESteamInputType_SwitchProController:
 						gamePadDeviceType = GamePadDeviceType.SWITCH;
 						priority = GamePadDevicePriority.EXPLICITLY_SUPPORTED;
 						break;
 					case ESteamInputType.k_ESteamInputType_SwitchJoyConSingle:
 						gamePadDeviceType = JoyConGamePadDeviceType;
 						priority = GamePadDevicePriority.SINGLE_JOY_CON;
+						break;
+					case ESteamInputType.k_ESteamInputType_SwitchProController:
+						gamePadDeviceType = SwitchProGamePadDeviceType;
+						priority = GamePadDevicePriority.EXPLICITLY_SUPPORTED;
 						break;
 					case ESteamInputType.k_ESteamInputType_MobileTouch:
 						gamePadDeviceType = MobileTouchGamePadDeviceType;
@@ -869,9 +969,11 @@ namespace GamepadSupportPlugin
 					case GamePadDeviceType.XBOX:
 						return Steamworks.ESteamInputType.k_ESteamInputType_XBoxOneController;
 					case GamePadDeviceType.SWITCH:
-						return Steamworks.ESteamInputType.k_ESteamInputType_SwitchProController;
+						return Steamworks.ESteamInputType.k_ESteamInputType_SwitchJoyConPair;
 					case GamePadDeviceType.STEAM:
 						return Steamworks.ESteamInputType.k_ESteamInputType_SteamController;
+					case SwitchProGamePadDeviceType:
+						return Steamworks.ESteamInputType.k_ESteamInputType_SwitchProController;
 					case JoyConGamePadDeviceType:
 						return Steamworks.ESteamInputType.k_ESteamInputType_SwitchJoyConSingle;
 					case MobileTouchGamePadDeviceType:
@@ -1041,12 +1143,11 @@ namespace GamepadSupportPlugin
 		{
 			switch ((GamePadDeviceType)__result)
 			{
+				case SwitchProGamePadDeviceType:
 				case JoyConGamePadDeviceType:
 					__result = (int)GamePadDeviceType.SWITCH;
 					break;
 				case MobileTouchGamePadDeviceType:
-					__result = (int)GamePadDeviceType.XBOX;
-					break;
 				case SteamDeckGamePadDeviceType:
 					__result = (int)GamePadDeviceType.XBOX;
 					break;
@@ -1059,12 +1160,11 @@ namespace GamepadSupportPlugin
 		{
 			switch (gamePadDeviceType)
 			{
+				case SwitchProGamePadDeviceType:
 				case JoyConGamePadDeviceType:
 					gamePadDeviceType = GamePadDeviceType.SWITCH;
 					break;
 				case MobileTouchGamePadDeviceType:
-					gamePadDeviceType = GamePadDeviceType.XBOX;
-					break;
 				case SteamDeckGamePadDeviceType:
 					gamePadDeviceType = GamePadDeviceType.XBOX;
 					break;
@@ -1121,15 +1221,22 @@ namespace GamepadSupportPlugin
 		static void GetEmojiStrFromGamepadButtonKeyType_postfix(
 			ref string __result,
 			GamePadDeviceType gamePadDeviceType,
-			KeyType gamepadKeyType)
+			KeyType gamepadKeyType,
+			Dictionary<KeyType, string> ___gamepadButtonKeyTypeToEmojiStrMapSwitch)
 		{
 			switch (gamePadDeviceType)
 			{
 				case GamePadDeviceType.STEAM:
 					__result = gamepadButtonKeyTypeToEmojiStrMapSteamController.GetValueSafe(gamepadKeyType) ?? "";
 					break;
+				case SwitchProGamePadDeviceType:
+					__result = ___gamepadButtonKeyTypeToEmojiStrMapSwitch.GetValueSafe(gamepadKeyType) ?? "";
+					break;
 				case JoyConGamePadDeviceType:
 					__result = gamepadButtonKeyTypeToEmojiStrMapJoyCon.GetValueSafe(gamepadKeyType) ?? "";
+					break;
+				case MobileTouchGamePadDeviceType:
+					// gamepadButtonKeyTypeToEmojiStrMapXbox is applied by default
 					break;
 				case SteamDeckGamePadDeviceType:
 					__result = gamepadButtonKeyTypeToEmojiStrMapSteamDeck.GetValueSafe(gamepadKeyType) ?? "";
@@ -1141,6 +1248,7 @@ namespace GamepadSupportPlugin
 		[HarmonyPostfix]
 		static void HelpMaster_construct(Dictionary<GamePadDeviceType, string> ___PadDeviceTypePFNameDic)
 		{
+			___PadDeviceTypePFNameDic[SwitchProGamePadDeviceType] = "Switch";
 			___PadDeviceTypePFNameDic[JoyConGamePadDeviceType] = "Switch";
 			___PadDeviceTypePFNameDic[MobileTouchGamePadDeviceType] = "Xbox";
 			___PadDeviceTypePFNameDic[SteamDeckGamePadDeviceType] = "PS4";
@@ -1170,6 +1278,7 @@ namespace GamepadSupportPlugin
 					{
 						switch (gamePadType)
 						{
+							case SwitchProGamePadDeviceType:
 							case JoyConGamePadDeviceType:
 								return GamePadDeviceType.SWITCH;
 							case MobileTouchGamePadDeviceType:
@@ -1210,6 +1319,7 @@ namespace GamepadSupportPlugin
 					key = GameInput2.GetGamePadButtonKeyType(InputType.Decide);
 					return steamSteamControllerSkinNameMap.GetValueSafe(key) ?? "";
 
+				case SwitchProGamePadDeviceType:
 				case JoyConGamePadDeviceType:
 					key = GameInput2.GetGamePadButtonKeyType(InputType.Decide);
 					return ___steamSwitchSkinNameMap.GetValueSafe(key) ?? "";
