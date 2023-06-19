@@ -11,7 +11,8 @@ using System.Reflection.Emit;
 using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
-using static GamePadDevice;
+using ActionHandleType = GamePadDevice.ActionHandleType;
+using GamePadDeviceType = GamePadDevice.GamePadDeviceType;
 using InputType = GameInput2.InputType;
 using KeyType = GameInput2.KeyType;
 
@@ -1021,7 +1022,7 @@ namespace GamepadSupportPlugin
 						index = 2;
 						break;
 				}
-				var myActionHandle = ___myActionHandleBases[(int)DefaultInputTypeToActionHandleTypeMap[input]];
+				var myActionHandle = ___myActionHandleBases[(int)GamePadDevice.DefaultInputTypeToActionHandleTypeMap[input]];
 				var keyType = (KeyType)GetKeyType(myActionHandle, index);
 				if (keyType == (KeyType)(-1))
 				{
@@ -1235,7 +1236,7 @@ namespace GamepadSupportPlugin
 			var inputHandle = AccessTools.Field(typeof(SteamGamePad), "inputHandle_t").GetValue(gamePadDevice);
 			var GetButton = AccessTools.Method(AccessTools.Inner(typeof(SteamGamePad), "MyActionHandleBase"), "GetButton").GetFastDelegate();
 			for (ActionHandleType i = 0; i < ActionHandleType.Max; i++)
-				if (IsConfiguableActionHandleTypeFlg(i))
+				if (GamePadDevice.IsConfiguableActionHandleTypeFlg(i))
 					buttonPushed[(int)i] = (bool)GetButton(myActionHandleBases[(int)i], inputHandle, 0);
 		}
 
@@ -1254,7 +1255,7 @@ namespace GamepadSupportPlugin
 				var GetButton = AccessTools.Method(AccessTools.Inner(typeof(SteamGamePad), "MyActionHandleBase"), "GetButton").GetFastDelegate();
 				for (ActionHandleType i = 0; i < ActionHandleType.Max; i++)
 				{
-					if (IsConfiguableActionHandleTypeFlg(i))
+					if (GamePadDevice.IsConfiguableActionHandleTypeFlg(i))
 					{
 						var pushed = (bool)GetButton(myActionHandleBases[(int)i], inputHandle, 0);
 						if (pushed != buttonPushed[(int)i])
