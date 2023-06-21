@@ -977,6 +977,13 @@ namespace GamepadSupportPlugin
 								builder.Append(" ~= ");
 								builder.Append((EInputActionOrigin)SteamInput.TranslateActionOrigin(Steamworks.ESteamInputType.k_ESteamInputType_Unknown, (Steamworks.EInputActionOrigin)origin));
 							}
+#if DEBUG
+							builder.Append(" [");
+							builder.Append(SteamInput.GetStringForActionOrigin((Steamworks.EInputActionOrigin)origin));
+							builder.Append("] [");
+							builder.Append(SteamInput.GetGlyphForActionOrigin((Steamworks.EInputActionOrigin)origin));
+							builder.Append("]");
+#endif
 						}
 						logger.LogInfo(builder.ToString());
 					}
