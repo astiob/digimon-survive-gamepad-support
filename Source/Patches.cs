@@ -677,9 +677,7 @@ namespace GamepadSupportPlugin
 			}
 
 #if DEBUG
-			var myLogSource = BepInEx.Logging.Logger.CreateLogSource("SteamInput");
-			myLogSource.LogInfo($"Changing GetTextureNameMapIndex result from {resultBeforePatch} to {__result}");
-			BepInEx.Logging.Logger.Sources.Remove(myLogSource);
+			GamepadSupportPlugin.Logger.LogInfo($"Changing GetTextureNameMapIndex result from {resultBeforePatch} to {__result}");
 #endif
 		}
 
