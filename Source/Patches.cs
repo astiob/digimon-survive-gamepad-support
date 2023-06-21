@@ -677,7 +677,7 @@ namespace GamepadSupportPlugin
 			}
 
 #if DEBUG
-			GamepadSupportPlugin.Logger.LogInfo($"Changing GetTextureNameMapIndex result from {resultBeforePatch} to {__result}");
+			GamepadSupportPlugin.Logger.LogDebug($"Changing GetTextureNameMapIndex result from {resultBeforePatch} to {__result}");
 #endif
 		}
 
@@ -942,13 +942,13 @@ namespace GamepadSupportPlugin
 				var logger = GamepadSupportPlugin.Logger;
 
 #if DEBUG
-				logger.LogInfo($"Action set handle \"MenuControls\": {actionSetHandle}");
+				logger.LogDebug($"Action set handle \"MenuControls\": {actionSetHandle}");
 				for (int i = 0; i < ___ActionHandleNames.Length; i++)
 				{
 					if (IsAnalogActionHandleType((ActionHandleType)i))
-						logger.LogInfo($"Analog action handle #{i} \"{___ActionHandleNames[i]}\": {SteamInput.GetAnalogActionHandle(___ActionHandleNames[i])}");
+						logger.LogDebug($"Analog action handle #{i} \"{___ActionHandleNames[i]}\": {SteamInput.GetAnalogActionHandle(___ActionHandleNames[i])}");
 					else
-						logger.LogInfo($"Digital action handle #{i} \"{___ActionHandleNames[i]}\": {SteamInput.GetDigitalActionHandle(___ActionHandleNames[i])}");
+						logger.LogDebug($"Digital action handle #{i} \"{___ActionHandleNames[i]}\": {SteamInput.GetDigitalActionHandle(___ActionHandleNames[i])}");
 				}
 #endif
 
