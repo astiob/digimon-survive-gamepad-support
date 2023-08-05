@@ -652,6 +652,7 @@ namespace GamepadSupportPlugin
 				case GamePadDeviceType.SWITCH:
 					if (___steamSwitchTextureNameMap[KeyType.GamePad_L3] == "sw_button_15")
 					{
+						// Sticks, not SL/SR
 						___steamSwitchTextureNameMap[KeyType.GamePad_L3] = "sw_button_09";
 						___steamSwitchTextureNameMap[KeyType.GamePad_R3] = "sw_button_10";
 						___steamSwitchTextureNameMap[KeyType.GamePad_L3DI] = "sw_button_09";
@@ -1177,6 +1178,13 @@ namespace GamepadSupportPlugin
 		{
 			text = AdaptStickAndDpadEmojiToGamePad(text, GameInput2.GetGamePadType());
 		}
+
+		// BattleTutorialManager.StartTutorial fetches gamepad-dependent
+		// tutorial text, but it needs no patching because all versions
+		// of the text are always identical except for the <sprite>s,
+		// but all <sprite>s are always adapted wholesale to the current
+		// gamepad, so the end result is always the same no matter which
+		// version StartTutorial picks.
 
 		[HarmonyPatch(typeof(SurvivorDefine), "GetGamepadButtonKeyTypeFromEmojiStr")]
 		[HarmonyPrefix]
