@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>GamepadSupportPlugin</AssemblyName>
-    <Description>Hides mouse pointer, improves gamepad support &amp; prompts.</Description>
+    <Description>Hides unused mouse pointer, improves gamepad support &amp; prompts.</Description>
     <TargetFramework>net461</TargetFramework>
     <Company>Chortos-2</Company>
     <Copyright>0BSD. © Chortos-2, 2022–2023</Copyright>
