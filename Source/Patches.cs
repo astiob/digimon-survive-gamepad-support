@@ -415,11 +415,19 @@ namespace GamepadSupportPlugin
 			{ KeyType.GamePad_Select, "xbox_V" },
 		};
 
-		// Random int values to avoid clashing with the base game and other mods
-		const GamePadDeviceType SwitchProGamePadDeviceType = (GamePadDeviceType)(-8646608);
+		// Random positive int values to avoid clashing with the base game and other mods.
+		// Negative values are reserved to allow CheckGamePadType to bitwise negate any value
+		// to force a redraw of on-screen prompts.
+		const GamePadDeviceType SwitchProGamePadDeviceType = (GamePadDeviceType)8646607;
 		const GamePadDeviceType JoyConGamePadDeviceType = (GamePadDeviceType)1083105190;
 		const GamePadDeviceType MobileTouchGamePadDeviceType = (GamePadDeviceType)2067307885;
-		const GamePadDeviceType SteamDeckGamePadDeviceType = (GamePadDeviceType)(-125593974);
+		const GamePadDeviceType SteamDeckGamePadDeviceType = (GamePadDeviceType)125593973;
+
+		static GamePadDeviceType Normalize(this GamePadDeviceType gamePadDeviceType)
+		{
+			int n = (int)gamePadDeviceType;
+			return (GamePadDeviceType)(n < 0 ? ~n : n);
+		}
 
 		static string ReplaceAll(this string text, Dictionary<string, string> substitutions)
 		{
@@ -429,7 +437,7 @@ namespace GamepadSupportPlugin
 
 		static string AdaptStickAndDpadEmojiToGamePad(string text, GamePadDeviceType gamePadDeviceType)
 		{
-			switch (gamePadDeviceType)
+			switch (gamePadDeviceType.Normalize())
 			{
 				case GamePadDeviceType.STEAM:
 					return text.ReplaceAll(stickAndDpadEmojiForSteamController);
@@ -448,7 +456,7 @@ namespace GamepadSupportPlugin
 
 		static string AdaptDefaultRebindableEmojiToGamePad(string text, GamePadDeviceType gamePadDeviceType)
 		{
-			switch (gamePadDeviceType)
+			switch (gamePadDeviceType.Normalize())
 			{
 				case SwitchProGamePadDeviceType: // (currently effectively a no-op)
 				case JoyConGamePadDeviceType:
@@ -636,6 +644,18 @@ namespace GamepadSupportPlugin
 		}
 
 		[HarmonyPatch(typeof(InputTextureDefine), "GetTextureNameMapIndex")]
+		[HarmonyTranspiler]
+		internal static IEnumerable<CodeInstruction> GetGamePadType_common_call_transpiler(IEnumerable<CodeInstruction> instructions)
+		{
+			foreach (var instruction in instructions)
+			{
+				yield return instruction;
+				if (instruction.Calls(AccessTools.Method(typeof(GameInput2), "GetGamePadType")))
+					yield return Transpilers.EmitDelegate<Func<GamePadDeviceType, GamePadDeviceType>>(Normalize);
+			}
+		}
+
+		[HarmonyPatch(typeof(InputTextureDefine), "GetTextureNameMapIndex")]
 		[HarmonyPostfix]
 		static void GetTextureNameMapIndex_postfix(
 			ref int __result,
@@ -647,7 +667,7 @@ namespace GamepadSupportPlugin
 			var resultBeforePatch = __result;
 #endif
 
-			switch (GameInput2.GetGamePadType())
+			switch (GameInput2.GetGamePadType().Normalize())
 			{
 				case GamePadDeviceType.SWITCH:
 					if (___steamSwitchTextureNameMap[KeyType.GamePad_L3] == "sw_button_15")
@@ -912,23 +932,25 @@ namespace GamepadSupportPlugin
 #endif
 				}
 			}
-			if (foundGamePadType != GamePadDeviceType.NONE && ___gamePadType == foundGamePadType &&
+			if (foundGamePadType != GamePadDeviceType.NONE &&
+				___gamePadType.Normalize() == foundGamePadType &&
 				!multidimensionalEqualityComparer.Equals(lastActionOrigins, foundActionOrigins))
 			{
-				// Force all input prompts to be redrawn.
-				// The way we achieve this is a bit of an ugly hack, as the game
-				// switches to keyboard prompts for an awfully long split second.
-				// It would be better to find & patch all instances of code like this:
-				//     GamePadDevice.GamePadDeviceType gamePadType = GameInput2.GetGamePadType();
-				//     if (gamePadDeviceType == gamePadType) return;
-				___gamePadType = GamePadDeviceType.NONE;
-				___inputHandle_t = default;
-				lastActionOrigins = null;
+				// Force all input prompts to be redrawn
+				___gamePadType = ~___gamePadType;
+				___inputHandle_t = foundInputHandle;
+				lastActionOrigins = foundActionOrigins;
 				AccessTools.Method(typeof(SteamGamePad), "InitSteamInputInitActionHandle").Invoke(__instance, null);
 			}
 			else if (!___isInitalized || !___inputHandle_t.Equals(foundInputHandle))
 			{
-				___gamePadType = foundGamePadType;
+				// Micro-optimize by avoiding redrawing input prompts if there's no need.
+				// This matches the original game, which just assigns here without Normalize(),
+				// because reassigning the same value doesn't trigger a redraw.
+				// But Normalize() forces us to add this guard to avoid
+				// assigning an equivalent but distinct gamePadType.
+				if (___gamePadType.Normalize() != foundGamePadType)
+					___gamePadType = foundGamePadType;
 				___inputHandle_t = foundInputHandle;
 				lastActionOrigins = foundActionOrigins;
 				AccessTools.Method(typeof(SteamGamePad), "InitSteamInputInitActionHandle").Invoke(__instance, null);
@@ -998,7 +1020,7 @@ namespace GamepadSupportPlugin
 		{
 			get
 			{
-				switch (GameInput2.GetGamePadType())
+				switch (GameInput2.GetGamePadType().Normalize())
 				{
 					case GamePadDeviceType.PS4:
 						return Steamworks.ESteamInputType.k_ESteamInputType_PS4Controller;
@@ -1177,6 +1199,7 @@ namespace GamepadSupportPlugin
 		[HarmonyPostfix]
 		static void LuaScript_get_game_pad_type_postfix(ref int __result)
 		{
+			__result = (int)((GamePadDeviceType)__result).Normalize();
 			switch ((GamePadDeviceType)__result)
 			{
 				case SwitchProGamePadDeviceType:
@@ -1194,6 +1217,7 @@ namespace GamepadSupportPlugin
 		[HarmonyPrefix]
 		static void GetStartButtonText_prefix(ref GamePadDeviceType gamePadDeviceType)
 		{
+			gamePadDeviceType = gamePadDeviceType.Normalize();
 			switch (gamePadDeviceType)
 			{
 				case SwitchProGamePadDeviceType:
@@ -1211,7 +1235,7 @@ namespace GamepadSupportPlugin
 
 		internal static void GetGamepadTutorialText_prefix(ref string text)
 		{
-			text = AdaptStickAndDpadEmojiToGamePad(text, GameInput2.GetGamePadType());
+			text = AdaptStickAndDpadEmojiToGamePad(text, GameInput2.GetGamePadType().Normalize());
 		}
 
 		// BattleTutorialManager.StartTutorial fetches gamepad-dependent
@@ -1248,8 +1272,11 @@ namespace GamepadSupportPlugin
 
 		[HarmonyPatch(typeof(SurvivorDefine), "GetEmojiStrFromGamepadButtonKeyType")]
 		[HarmonyPrefix]
-		static void GetEmojiStrFromGamepadButtonKeyType_prefix(Dictionary<KeyType, string> ___gamepadButtonKeyTypeToEmojiStrMapSwitch)
+		static void GetEmojiStrFromGamepadButtonKeyType_prefix(
+			ref GamePadDeviceType gamePadDeviceType,
+			Dictionary<KeyType, string> ___gamepadButtonKeyTypeToEmojiStrMapSwitch)
 		{
+			gamePadDeviceType = gamePadDeviceType.Normalize();
 			if (___gamepadButtonKeyTypeToEmojiStrMapSwitch[KeyType.GamePad_B] == "<sprite index=20>")
 			{
 				___gamepadButtonKeyTypeToEmojiStrMapSwitch[KeyType.GamePad_A] = "<sprite index=20>";
@@ -1297,11 +1324,18 @@ namespace GamepadSupportPlugin
 			___PadDeviceTypePFNameDic[SteamDeckGamePadDeviceType] = "PS4";
 		}
 
+		[HarmonyPatch(typeof(HelpMaster), "GetPlatform")]
+		[HarmonyPrefix]
+		static void GetPlatform_prefix(ref GamePadDeviceType padType)
+		{
+			padType = padType.Normalize();
+		}
+
 		[HarmonyPatch(typeof(DBHelpText), "GetString")]
 		[HarmonyPostfix]
 		static void DBHelpText_GetString_postfix(ref string __result)
 		{
-			var gamePadType = GameInput2.GetGamePadType();
+			var gamePadType = GameInput2.GetGamePadType().Normalize();
 			__result = AdaptDefaultRebindableEmojiToGamePad(AdaptStickAndDpadEmojiToGamePad(__result, gamePadType), gamePadType);
 		}
 
@@ -1319,6 +1353,7 @@ namespace GamepadSupportPlugin
 					yield return new CodeInstruction(OpCodes.Ldarga_S, 0);
 					yield return Transpilers.EmitDelegate<FixGamePadDeviceTypeForSprite>((GamePadDeviceType gamePadType, ref string spriteName) =>
 					{
+						gamePadType = gamePadType.Normalize();
 						switch (gamePadType)
 						{
 							case SwitchProGamePadDeviceType:
@@ -1356,7 +1391,7 @@ namespace GamepadSupportPlugin
 		internal static string GetTextSpineObjSkinSkinName_postfix(string __result, Dictionary<KeyType, string> ___steamSwitchSkinNameMap)
 		{
 			KeyType key;
-			switch (GameInput2.GetGamePadType())
+			switch (GameInput2.GetGamePadType().Normalize())
 			{
 				case GamePadDeviceType.STEAM:
 					key = GameInput2.GetGamePadButtonKeyType(InputType.Decide);
