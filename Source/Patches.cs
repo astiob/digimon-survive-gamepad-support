@@ -1009,6 +1009,14 @@ namespace GamepadSupportPlugin
 						}
 						logger.LogInfo(builder.ToString());
 					}
+
+#if DEBUG
+					for (EXboxOrigin origin = EXboxOrigin.k_EXboxOrigin_A; origin < EXboxOrigin.k_EXboxOrigin_Count; origin++)
+					{
+						var translated = SteamInput.GetActionOriginFromXboxOrigin(___controllerHandles[i], origin);
+						logger.LogInfo($"  {origin} => {translated}");
+					}
+#endif
 				}
 			}
 #endif
