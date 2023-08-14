@@ -1509,5 +1509,34 @@ namespace GamepadSupportPlugin
 			}
 			return true;
 		}
+
+		/// <summary>
+		/// Hide "*For default control settings" when viewing the
+		/// "Adventure Controls" and "Battle Controls" screens
+		/// when they do reflect the current control settings.
+		/// </summary>
+		[HarmonyPatch(typeof(MainMenuTutorialOperationInfo), "Update")]
+		[HarmonyPatch(typeof(MainMenuTutorialOperationInfo), "Init")]
+		[HarmonyPatch(typeof(MainMenuTutorialOperationInfo), "OpenAdvData")]
+		[HarmonyPatch(typeof(MainMenuTutorialOperationInfo), "OpenBtlData")]
+		[HarmonyPatch(typeof(MainMenuTutorialOperationInfo), "Close")]
+		[HarmonyTranspiler]
+		public static IEnumerable<CodeInstruction> MainMenuTutorialOperationInfo_transpiler(IEnumerable<CodeInstruction> instructions)
+		{
+			foreach (var instruction in instructions)
+			{
+				if (instruction.Calls(AccessTools.Method(typeof(GameObject), "SetActive")))
+				{
+					yield return new CodeInstruction(OpCodes.Dup);
+					yield return new CodeInstruction(OpCodes.Ldarg_0);
+					yield return Transpilers.EmitDelegate<Action<bool, MainMenuTutorialOperationInfo>>((isActive, operationInfo) =>
+					{
+						operationInfo.transform.parent.parent.FindGameObject("ForDefaultSettingsText")?.SetActive(
+							!isActive || GameInput2.GetGamePadType() == GamePadDeviceType.NONE);
+					});
+				}
+				yield return instruction;
+			}
+		}
 	}
 }
