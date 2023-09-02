@@ -156,6 +156,21 @@ namespace GamepadSupportPlugin
 			new string[3] { "ps_button_26", "ps_button_27", "ps_button_09" },
 			new string[3] { "ps_button_32", "ps_button_33", "ps_button_10" },
 		};
+		static readonly Dictionary<KeyType, string> gamepadButtonKeyTypeToEmojiStrMapSwitchPro = new Dictionary<KeyType, string>
+		{
+			{ KeyType.GamePad_B, "<sprite index=21>" },
+			{ KeyType.GamePad_A, "<sprite index=20>" },
+			{ KeyType.GamePad_X, "<sprite index=23>" },
+			{ KeyType.GamePad_Y, "<sprite index=22>" },
+			{ KeyType.GamePad_L1, "<sprite index=24>" },
+			{ KeyType.GamePad_R1, "<sprite index=25>" },
+			{ KeyType.GamePad_L2, "<sprite index=26>" },
+			{ KeyType.GamePad_R2, "<sprite index=27>" },
+			// PS4's sticks
+			{ KeyType.GamePad_L3, "<sprite index=16>" },
+			{ KeyType.GamePad_R3, "<sprite index=17>" },
+			{ KeyType.GamePad_Select, "<sprite index=129>" },
+		};
 		static readonly Dictionary<string, string> stickAndDpadEmojiForSwitchPro = new Dictionary<string, string>
 		{
 			// PS4's sticks
@@ -1314,8 +1329,7 @@ namespace GamepadSupportPlugin
 		static void GetEmojiStrFromGamepadButtonKeyType_postfix(
 			ref string __result,
 			GamePadDeviceType gamePadDeviceType,
-			KeyType gamepadKeyType,
-			Dictionary<KeyType, string> ___gamepadButtonKeyTypeToEmojiStrMapSwitch)
+			KeyType gamepadKeyType)
 		{
 			switch (gamePadDeviceType)
 			{
@@ -1323,7 +1337,7 @@ namespace GamepadSupportPlugin
 					__result = gamepadButtonKeyTypeToEmojiStrMapSteamController.GetValueSafe(gamepadKeyType) ?? "";
 					break;
 				case SwitchProGamePadDeviceType:
-					__result = ___gamepadButtonKeyTypeToEmojiStrMapSwitch.GetValueSafe(gamepadKeyType) ?? "";
+					__result = gamepadButtonKeyTypeToEmojiStrMapSwitchPro.GetValueSafe(gamepadKeyType) ?? "";
 					break;
 				case JoyConGamePadDeviceType:
 					__result = gamepadButtonKeyTypeToEmojiStrMapJoyCon.GetValueSafe(gamepadKeyType) ?? "";
