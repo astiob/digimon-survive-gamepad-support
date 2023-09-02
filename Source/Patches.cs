@@ -180,10 +180,10 @@ namespace GamepadSupportPlugin
 
 		static readonly Dictionary<KeyType, string> joyConTextureNameMap = new Dictionary<KeyType, string>
 		{
-			{ KeyType.GamePad_A, "sw_button_19" },
-			{ KeyType.GamePad_B, "sw_button_17" },
-			{ KeyType.GamePad_X, "sw_button_13" },
-			{ KeyType.GamePad_Y, "sw_button_18" },
+			{ KeyType.GamePad_A, "sw_button_17" },
+			{ KeyType.GamePad_B, "sw_button_19" },
+			{ KeyType.GamePad_X, "sw_button_18" },
+			{ KeyType.GamePad_Y, "sw_button_13" },
 			{ KeyType.GamePad_L1, "sw_button_15" },
 			{ KeyType.GamePad_R1, "sw_button_16" },
 			// L2 & R2 don't exist in the default configuration.
@@ -225,10 +225,10 @@ namespace GamepadSupportPlugin
 		};
 		static readonly Dictionary<KeyType, string> gamepadButtonKeyTypeToEmojiStrMapJoyCon = new Dictionary<KeyType, string>
 		{
-			{ KeyType.GamePad_B, "<sprite index=95>" },
-			{ KeyType.GamePad_A, "<sprite index=94>" },
-			{ KeyType.GamePad_X, "<sprite index=30>" },
-			{ KeyType.GamePad_Y, "<sprite index=96>" },
+			{ KeyType.GamePad_B, "<sprite index=94>" },
+			{ KeyType.GamePad_A, "<sprite index=95>" },
+			{ KeyType.GamePad_X, "<sprite index=96>" },
+			{ KeyType.GamePad_Y, "<sprite index=30>" },
 			// SL & SR sprites don't exist here, so use the standard Switch L & R sprites
 			{ KeyType.GamePad_L1, "<sprite index=24>" },
 			{ KeyType.GamePad_R1, "<sprite index=25>" },
@@ -571,10 +571,17 @@ namespace GamepadSupportPlugin
 		static void SteamGamePad_preconstruct(Dictionary<Steamworks.EInputActionOrigin, KeyType[]> ___eInputActionOriginToKeyInputMap)
 		{
 			// Single Switch JoyCon
-			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_Switch_JoyConButton_E] = new KeyType[1] { KeyType.GamePad_A };
-			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_Switch_JoyConButton_S] = new KeyType[1] { KeyType.GamePad_B };
-			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_Switch_JoyConButton_N] = new KeyType[1] { KeyType.GamePad_X };
-			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_Switch_JoyConButton_W] = new KeyType[1] { KeyType.GamePad_Y };
+			//
+			// Map to Xbox-layout KeyTypes in order to improve our handling of situations
+			// where Steam tells us the controller is a Joy-Con but gives us non-Switch origins:
+			// we want to display the physically correct sprites for origins like Xbox360_A,
+			// which are themselves mapped to Xbox-layout KeyTypes. Steam gives Xbox360_A when
+			// Nintendo layout is switched *off*, so it ought to correspond to the "south" sprite.
+			// Hence, map the south origin to the same KeyType to display the same sprite for it.
+			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_Switch_JoyConButton_E] = new KeyType[1] { KeyType.GamePad_B };
+			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_Switch_JoyConButton_S] = new KeyType[1] { KeyType.GamePad_A };
+			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_Switch_JoyConButton_N] = new KeyType[1] { KeyType.GamePad_Y };
+			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_Switch_JoyConButton_W] = new KeyType[1] { KeyType.GamePad_X };
 
 			// Steam Deck
 			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_A] = new KeyType[1] { KeyType.GamePad_A };
