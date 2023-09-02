@@ -1004,6 +1004,8 @@ namespace GamepadSupportPlugin
 							builder.Append(SteamInput.GetStringForActionOrigin((Steamworks.EInputActionOrigin)origin));
 							builder.Append("] [");
 							builder.Append(SteamInput.GetGlyphForActionOrigin((Steamworks.EInputActionOrigin)origin));
+							builder.Append("] [");
+							builder.Append(SteamInput.TranslateActionOrigin(Steamworks.ESteamInputType.k_ESteamInputType_XBox360Controller, (Steamworks.EInputActionOrigin)origin));
 							builder.Append("]");
 #endif
 						}
@@ -1014,6 +1016,12 @@ namespace GamepadSupportPlugin
 					for (EXboxOrigin origin = EXboxOrigin.k_EXboxOrigin_A; origin < EXboxOrigin.k_EXboxOrigin_Count; origin++)
 					{
 						var translated = SteamInput.GetActionOriginFromXboxOrigin(___controllerHandles[i], origin);
+						logger.LogInfo($"  {origin} => {translated}");
+					}
+					var inputType = SteamInput.GetInputTypeForHandle(___controllerHandles[i]);
+					for (Steamworks.EInputActionOrigin origin = Steamworks.EInputActionOrigin.k_EInputActionOrigin_XBox360_A; origin < Steamworks.EInputActionOrigin.k_EInputActionOrigin_XBox360_Reserved1; origin++)
+					{
+						var translated = SteamInput.TranslateActionOrigin(inputType, origin);
 						logger.LogInfo($"  {origin} => {translated}");
 					}
 #endif
