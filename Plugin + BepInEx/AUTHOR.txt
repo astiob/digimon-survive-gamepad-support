@@ -1,0 +1,81 @@
+This mod/plugin was developed by Chortos-2 from 9 Aug to 25 Sep 2022.
+I can be contacted at:
+  * chortos@inbox.lv
+  * https://steamcommunity.com/id/astiob/
+  * https://chortos.selfip.net/~astiob/me#contact
+
+I have no affiliation to the original developers of the game, the included
+libraries or Steam, nor to any of the copyright owners of the franchise.
+
+Official developers of the game are free and encouraged to incorporate
+my improvements back into the official game. No attribution or compensation
+is required, although I would be happy to receive some.
+
+
+-----------------------
+Zero-Clause BSD License
+
+Copyright (c) 2022 Oleg Oshmyan (Chortos-2)
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+PERFORMANCE OF THIS SOFTWARE.
+
+
+------------------
+Included libraries
+
+To inject my code into the game, this installation package
+includes binary forms of the following MIT-licensed software:
+
+  * BepInEx 5.4.21 (c) 2018 Bepis
+    https://github.com/BepInEx/BepInEx/tree/v5.4.21
+
+  * HarmonyX 2.7.0 (c) 2020 BepInEx
+    https://github.com/BepInEx/HarmonyX/tree/v2.7.0
+    based on Harmony 2 (c) 2017 Andreas Pardeike
+
+  * MonoMod 21.12.13.01 (c) 2015 - 2020 0x0ade
+    https://github.com/MonoMod/MonoMod/tree/v21.12.13.01
+
+  * Cecil 0.10.4 (c) 2008 - 2015 Jb Evain, (c) 2008 - 2011 Novell, Inc.
+    https://github.com/jbevain/cecil/tree/98ec890d44643ad88d573e97be0e120435eda732
+
+and the following CC0/public domain software:
+
+  * UnityDoorstop 3.4.0.0
+    https://github.com/NeighTools/UnityDoorstop/tree/81919046fa3cff331916f26bb5aec0c5d6d25adb
+
+MIT License
+
+Copyright (c) 2018 Bepis
+Copyright (c) 2020 BepInEx
+Copyright (c) 2017 Andreas Pardeike
+Copyright (c) 2015 - 2020 0x0ade
+Copyright (c) 2008 - 2015 Jb Evain
+Copyright (c) 2008 - 2011 Novell, Inc.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

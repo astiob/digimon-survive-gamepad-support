@@ -1,0 +1,54 @@
+<h1>Features</h1>
+<p>This plugin improves the game’s support for gamepads/controllers of all brands.</p>
+<p>Unsupported controllers now work.<br
+>Missing prompts are added.<br
+>Wrong prompts are corrected.<br
+>Prompts better match hardware.<br
+>You can’t screw up in-game gamepad settings.<br
+>The game’s choice of controller (if you have multiple) is improved.<br
+>The mouse pointer is hidden when unused.</p>
+<p>Specifically:</p>
+<ul>
+<li>The mouse pointer disappears when using a gamepad or keyboard and reappears when the mouse is used again (since mod version&nbsp;1.2).</li>
+<li><b>A Joy-Con pair</b> is recognized as a Switch controller, and all controls work and have visible on-screen prompts with the official configuration.</li>
+<li><b>Steam Deck’s</b> built-in controls and <b>mobile Steam Link’s</b> on-screen touch controls work fully and have visible on-screen prompts throughout the game with the official configuration, and the on-screen prompts more closely match the actual hardware.</li>
+<li><b>PlayStation&nbsp;3</b> controllers are recognized and work with the official configuration. On-screen prompts show the DualShock&nbsp;4’s buttons.</li>
+<li><b>MFi controllers on Apple devices</b> running Steam Link are recognized and work. On-screen prompts are styled as for the Xbox One (because that's the default style).</li>
+<li><b>A single Joy-Con</b> is recognized and works with the official configuration, but because it lacks a ZL/ZR pair, it isn’t enough to beat the game. As it also lacks a D-pad, text skipping and auto-advance is unavailable. On-screen prompts mostly match the Joy-Con’s hardware layout (including plus or minus depending on which Joy-Con it is), but some inconsistencies remain and prompts for nonexistent controls are still displayed.</li>
+<li>Other officially unsupported controller types and configurations should also have a better chance of working. Share your experience in the comments!</li>
+<li>On-screen prompts never turn into white squares or persist after switching to another controller; all unrecognized inputs consistently show closest-approximation (since mod version&nbsp;1.2) or default prompts instead.</li>
+<li>Standard buttons unbound via in-game Gamepad Settings can be rebound without resorting to resetting the whole settings page to defaults.</li>
+<li><b>PlayStation controllers:</b> the interaction prompt during exploration correctly shows “X” instead of “O” if you’re using the default “X” binding (or “O” instead of “X” if you genuinely have this action bound to “O”). Help pictures still show “O” though.</li>
+<li><b>Switch controllers:</b> tutorial instructions correctly show “A”, “B”, “X” and “Y” instead of “B”, “A”, “Y” and “X”, and on-screen prompts for stick clicks (if you’re using them) consistently show the sticks instead of SL/SR.</li>
+<li><b>Steam Controller:</b> all on-screen prompts for the right trackpad show “R” instead of “RS”.</li>
+<li>Controllers connected via Remote Play (including Steam Link) take priority over controllers attached to the host computer (improved in mod version&nbsp;1.2).</li>
+<li>Controllers are prioritized by type:<ol>
+<li>explicitly supported controllers: Xbox, PlayStation, Steam Controller, Switch Pro Controller, paired Joy-Con;</li>
+<li>generic/unrecognized controllers;</li>
+<li>built-in controls on the Steam Deck or mobile Steam Link (so that if an external controller attached, it takes over);</li>
+<li>single Joy-Con (because it has too few controls).</li>
+</ol></li>
+</ul>
+<p>Joy-Con support requires Steam client’s 19&nbsp;Aug&nbsp;2022 update.<br
+>Some local controllers may not be fully supported by Steam on Windows&nbsp;7.</p>
+
+<h1>Installing</h1>
+<ol>
+<li>In your Steam Library, right-click Digimon Survive (or click the gear button for Digimon Survive) and select Manage → Browse Local Files or Properties → Local Files → Browse. This will open the game’s file folder.</li>
+<li>Download the mod’s combined installation package and copy/extract all the files from “Files to extract” into the game’s folder, so that the folder looks like this:<br><img src="https://cdn.discordapp.com/attachments/1001511860547362866/1004409905509322882/2022-08-03_182607.png"><br>If you already have BepInEx from another mod, you can instead download the plugin-only package and just copy/extract <samp>GamepadSupportPlugin.dll</samp> into the <samp>BepInEx\plugins</samp> folder.</li>
+<li>If you’re using Linux/Proton (including Steam Deck), open Digimon Survive in your Steam Library, press the gear button, select Properties, and put this in Launch Options:
+<pre><kbd>WINEDLLOVERRIDES="winhttp=n,b" %command%</kbd></pre></li>
+</ol>
+<p>That’s it. The mod will be active whenever you launch the game.</p>
+
+<h1>Share your experience</h1>
+<p>The plugin records your gamepad configuration in the file <samp>BepInEx\LogOutput.log</samp> in the game’s folder. If you are still having problems, show me the contents of this file and I’ll see if I can help.</p>
+<p>If this plugin has helped you with the Steam Deck or with a controller that previously didn’t work, tell everyone in the comments here or <a href="https://steamcommunity.com/sharedfiles/filedetails/?id=2854301523">on Steam</a>! And personally I’m curious to see the contents of your <samp>BepInEx\LogOutput.log</samp> file as well.</p>
+
+<h1>Notes</h1>
+<ul>
+<li>This doesn’t replace any of the game’s existing files, so you can safely verify local files in Steam (although beware: independent of this mod, some people report that verification erases their local save files).</li>
+<li>I don’t expect future game updates to break the mod, but it is possible if the official developers work on gamepad functionality. If an update does break the mod, I’ll make a new version of it.</li>
+<li>This can be combined with other mods, including other BepInEx plugins (unless they target the same gamepad code).</li>
+<li>On Linux/Proton, as an alternative to setting the game’s Launch Options in Steam, you could instead <a href="https://www.reddit.com/r/MySummerCar/comments/ldkpdl/getting_mods_to_work_in_linuxproton/">use Protontricks</a>.</li>
+</ul>
