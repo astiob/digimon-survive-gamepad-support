@@ -1,3 +1,27 @@
+// Since late 2022 or early 2023, Joy-Con origins are consistently swapped
+// to Xbox order when Nintendo layout is *on* (when it's off, the origins
+// returned are Xbox360 origins and not Switch ones at all):
+// the origin labelled "E" is really south, and the one labelled "S" is east;
+// the origin labelled "N" is really west, and the one labelled "W" is north.
+//
+// This even applies to the A/B/X/Y origins in case of a Joy-Con pair,
+// but not to those same origins on the Switch Pro Controller:
+// the physical A button of the right Joy-Con is reported as
+// the B origin and vice versa, and the same happens for X & Y.
+//
+// I think this is a bug and I've reported it:
+//
+// https://steamcommunity.com/groups/bigpicture/discussions/4/3802776070753844269/
+//
+// but there's been no action on it for several months,
+// so assume this is intentional and work around it.
+//
+// I haven't found a way to detect whether the origins are correct
+// (as they currently are for the Switch Pro Controller) or swapped,
+// so if Valve fixes this at some point, GamepadSupportPlugin will
+// need a new release to accommodate the fix.
+#define FLIPPED_JOYCON_LAYOUT
+
 using Game.Databases;
 using HarmonyLib;
 using MonoMod.Utils;
@@ -595,10 +619,24 @@ namespace GamepadSupportPlugin
 			// Xbox360_A when Nintendo layout is switched *off*, so it ought
 			// to correspond to the "south" sprite. Hence, map the south
 			// origin to the same KeyType to display the same sprite for it.
+			//
+			// And yet, since late 2022 or early 2023, Joy-Con origins are
+			// consistently swapped to Xbox order when Nintendo layout is *on*
+			// (see the comment at the top of this file). In this lookup table,
+			// this effectively negates the effect of the previous paragraph,
+			// but during sprite lookup, we continue to map KeyType.GamePad_A
+			// to the "south" sprite.
+#if FLIPPED_JOYCON_LAYOUT
+			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_Switch_JoyConButton_E] = new KeyType[1] { KeyType.GamePad_A };
+			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_Switch_JoyConButton_S] = new KeyType[1] { KeyType.GamePad_B };
+			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_Switch_JoyConButton_N] = new KeyType[1] { KeyType.GamePad_X };
+			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_Switch_JoyConButton_W] = new KeyType[1] { KeyType.GamePad_Y };
+#else
 			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_Switch_JoyConButton_E] = new KeyType[1] { KeyType.GamePad_B };
 			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_Switch_JoyConButton_S] = new KeyType[1] { KeyType.GamePad_A };
 			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_Switch_JoyConButton_N] = new KeyType[1] { KeyType.GamePad_Y };
 			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_Switch_JoyConButton_W] = new KeyType[1] { KeyType.GamePad_X };
+#endif
 
 			// Steam Deck
 			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_SteamDeck_A] = new KeyType[1] { KeyType.GamePad_A };
@@ -701,6 +739,13 @@ namespace GamepadSupportPlugin
 						___steamSwitchTextureNameMap[KeyType.GamePad_R3] = "sw_button_10";
 						___steamSwitchTextureNameMap[KeyType.GamePad_L3DI] = "sw_button_09";
 						___steamSwitchTextureNameMap[KeyType.GamePad_R3DI] = "sw_button_10";
+
+#if FLIPPED_JOYCON_LAYOUT
+						___steamSwitchTextureNameMap[KeyType.GamePad_A] = "sw_button_02";
+						___steamSwitchTextureNameMap[KeyType.GamePad_B] = "sw_button_01";
+						___steamSwitchTextureNameMap[KeyType.GamePad_X] = "sw_button_03";
+						___steamSwitchTextureNameMap[KeyType.GamePad_Y] = "sw_button_04";
+#endif
 					}
 					break;
 				case GamePadDeviceType.STEAM:
@@ -1324,6 +1369,13 @@ namespace GamepadSupportPlugin
 			Dictionary<KeyType, string> ___gamepadButtonKeyTypeToEmojiStrMapSwitch)
 		{
 			gamePadDeviceType = gamePadDeviceType.Normalize();
+			// Since late 2022 or early 2023, Joy-Con origins (including for Joy-Con
+			// pairs) are swapped: the physical A button is reported as the B origin
+			// and vice versa, and the same happens for X & Y. The game's stock
+			// gamepadButtonKeyTypeToEmojiStrMapSwitch actually has similarly swapped
+			// entries, which earlier versions of GamepadSupportPlugin have been
+			// fixing as a game bug, so it fits as is.
+#if !FLIPPED_JOYCON_LAYOUT
 			if (___gamepadButtonKeyTypeToEmojiStrMapSwitch[KeyType.GamePad_B] == "<sprite index=20>")
 			{
 				___gamepadButtonKeyTypeToEmojiStrMapSwitch[KeyType.GamePad_A] = "<sprite index=20>";
@@ -1331,6 +1383,7 @@ namespace GamepadSupportPlugin
 				___gamepadButtonKeyTypeToEmojiStrMapSwitch[KeyType.GamePad_Y] = "<sprite index=22>";
 				___gamepadButtonKeyTypeToEmojiStrMapSwitch[KeyType.GamePad_X] = "<sprite index=23>";
 			}
+#endif
 		}
 
 		[HarmonyPatch(typeof(SurvivorDefine), "GetEmojiStrFromGamepadButtonKeyType")]
@@ -1442,6 +1495,25 @@ namespace GamepadSupportPlugin
 				case GamePadDeviceType.STEAM:
 					key = GameInput2.GetGamePadButtonKeyType(InputType.Decide);
 					return steamControllerSkinNameMap.GetValueSafe(key) ?? "";
+
+#if FLIPPED_JOYCON_LAYOUT
+				case GamePadDeviceType.SWITCH:
+					key = GameInput2.GetGamePadButtonKeyType(InputType.Decide);
+					switch (key)
+					{
+						case KeyType.GamePad_A:
+							key = KeyType.GamePad_B; break;
+						case KeyType.GamePad_B:
+							key = KeyType.GamePad_A; break;
+						case KeyType.GamePad_X:
+							key = KeyType.KeyCode_Y; break;
+						case KeyType.GamePad_Y:
+							key = KeyType.KeyCode_X; break;
+						default:
+							return __result;
+					}
+					return ___steamSwitchSkinNameMap.GetValueSafe(key) ?? "";
+#endif
 
 				case SwitchProGamePadDeviceType:
 				case JoyConGamePadDeviceType:
