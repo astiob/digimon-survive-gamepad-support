@@ -53,7 +53,7 @@ namespace GamepadSupportPlugin
 		 * | DirectionInputTextureNames           |     |      |        |   *   |     *     |   *    |      *      |     *     |
 		 * | gamepadButtonKeyTypeToEmojiStrMap    |     |      |  ~*~   |   *   |     *     |   *    |    XBOX     |     *     |
 		 * | stickAndDpadEmoji                    |     |      |        |   *   |     *     |   *    |      *      |     *     |
-		 * | SkinNameMap                          |  *  |      |  (*)   |   *   |  SWITCH   | SWITCH |    XBOX     |     *     |
+		 * | SkinNameMap                          |  *  |      |  (*)   |   *   |  SWITCH   |   *    |    XBOX     |     *     |
 		 * | StartButtonText                      |     |      |        |       |  SWITCH   | SWITCH |    XBOX     |   XBOX    |
 		 * | HelpMaster                           |     |      |        |       |  SWITCH   | SWITCH |    XBOX     |    PS4    |
 		 * | HelpImageManager                     |     |      |        |       |  SWITCH   | SWITCH |    XBOX     |     *     |
@@ -314,6 +314,22 @@ namespace GamepadSupportPlugin
 			{ "<sprite index=94>", "<sprite index=97>" },
 			{ "<sprite index=95>", "<sprite index=98>" },
 			{ "<sprite index=96>", "<sprite index=99>" },
+		};
+		static readonly Dictionary<KeyType, string> joyConSkinNameMap = new Dictionary<KeyType, string>
+		{
+			// Face buttons of a rotated right Joy-Con
+			{ KeyType.GamePad_A, "switch_A" },
+			{ KeyType.GamePad_B, "switch_X" },
+			{ KeyType.GamePad_X, "switch_B" },
+			{ KeyType.GamePad_Y, "switch_Y" },
+			{ KeyType.GamePad_L1, "switch_L" },
+			{ KeyType.GamePad_R1, "switch_R" },
+			{ KeyType.GamePad_L2, "switch_Zl" },
+			{ KeyType.GamePad_R2, "switch_Zr" },
+			{ KeyType.GamePad_L3, "switch_Ls" },
+			{ KeyType.GamePad_R3, "switch_Rs" },
+			{ KeyType.GamePad_Start, "switch_P" },
+			{ KeyType.GamePad_Select, "switch_M" },
 		};
 
 		static readonly Dictionary<KeyType, string> mobileTouchTextureNameMap = new Dictionary<KeyType, string>
@@ -1533,9 +1549,12 @@ namespace GamepadSupportPlugin
 #endif
 
 				case SwitchProGamePadDeviceType:
-				case JoyConGamePadDeviceType:
 					key = GameInput2.GetGamePadButtonKeyType(InputType.Decide);
 					return ___steamSwitchSkinNameMap.GetValueSafe(key) ?? "";
+
+				case JoyConGamePadDeviceType:
+					key = GameInput2.GetGamePadButtonKeyType(InputType.Decide);
+					return joyConSkinNameMap.GetValueSafe(key) ?? "";
 
 				case MobileTouchGamePadDeviceType:
 					// steamXboxSkinNameMap is applied by default
