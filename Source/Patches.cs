@@ -1028,6 +1028,8 @@ namespace GamepadSupportPlugin
 							builder.Append(SteamInput.GetGlyphForActionOrigin((Steamworks.EInputActionOrigin)origin));
 							builder.Append("] [");
 							builder.Append(SteamInput.TranslateActionOrigin(Steamworks.ESteamInputType.k_ESteamInputType_XBox360Controller, (Steamworks.EInputActionOrigin)origin));
+							builder.Append("] [SwitchPro: ");
+							builder.Append(SteamInput.TranslateActionOrigin(Steamworks.ESteamInputType.k_ESteamInputType_SwitchProController, (Steamworks.EInputActionOrigin)origin));
 							builder.Append("]");
 #endif
 						}
@@ -1042,6 +1044,11 @@ namespace GamepadSupportPlugin
 					}
 					var inputType = SteamInput.GetInputTypeForHandle(___controllerHandles[i]);
 					for (Steamworks.EInputActionOrigin origin = Steamworks.EInputActionOrigin.k_EInputActionOrigin_XBox360_A; origin < Steamworks.EInputActionOrigin.k_EInputActionOrigin_XBox360_Reserved1; origin++)
+					{
+						var translated = SteamInput.TranslateActionOrigin(inputType, origin);
+						logger.LogInfo($"  {origin} => {translated}");
+					}
+					for (Steamworks.EInputActionOrigin origin = Steamworks.EInputActionOrigin.k_EInputActionOrigin_Switch_A; origin <= Steamworks.EInputActionOrigin.k_EInputActionOrigin_Switch_Y; origin++)
 					{
 						var translated = SteamInput.TranslateActionOrigin(inputType, origin);
 						logger.LogInfo($"  {origin} => {translated}");
