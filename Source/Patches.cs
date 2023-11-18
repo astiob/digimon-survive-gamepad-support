@@ -587,12 +587,14 @@ namespace GamepadSupportPlugin
 		{
 			// Single Switch JoyCon
 			//
-			// Map to Xbox-layout KeyTypes in order to improve our handling of situations
-			// where Steam tells us the controller is a Joy-Con but gives us non-Switch origins:
-			// we want to display the physically correct sprites for origins like Xbox360_A,
-			// which are themselves mapped to Xbox-layout KeyTypes. Steam gives Xbox360_A when
-			// Nintendo layout is switched *off*, so it ought to correspond to the "south" sprite.
-			// Hence, map the south origin to the same KeyType to display the same sprite for it.
+			// Map to Xbox-layout KeyTypes in order to improve our handling
+			// of situations where Steam tells us the controller is a Joy-Con
+			// but gives us non-Switch origins: we want to display the
+			// physically correct sprites for origins like Xbox360_A, which
+			// are themselves mapped to Xbox-layout KeyTypes. Steam gives
+			// Xbox360_A when Nintendo layout is switched *off*, so it ought
+			// to correspond to the "south" sprite. Hence, map the south
+			// origin to the same KeyType to display the same sprite for it.
 			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_Switch_JoyConButton_E] = new KeyType[1] { KeyType.GamePad_B };
 			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_Switch_JoyConButton_S] = new KeyType[1] { KeyType.GamePad_A };
 			___eInputActionOriginToKeyInputMap[(Steamworks.EInputActionOrigin)EInputActionOrigin.k_EInputActionOrigin_Switch_JoyConButton_N] = new KeyType[1] { KeyType.GamePad_Y };
