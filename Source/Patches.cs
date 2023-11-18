@@ -44,6 +44,23 @@ namespace GamepadSupportPlugin
 {
 	static class Patches
 	{
+		/*
+		 * +--------------------------------------+-----+------+--------+-------+-----------+--------+-------------+-----------+
+		 * |                                      | PS4 | XBOX | SWITCH | STEAM | SwitchPro | JoyCon | MobileTouch | SteamDeck |
+		 * +--------------------------------------+-----+------+--------+-------+-----------+--------+-------------+-----------+
+		 * | eInputActionOriginToKeyInputMap      |     |      |        |       |           |   *    |             |     *     |
+		 * | TextureNameMap                       |     |      |   *    |   *   |     *     |   *    |      *      |     *     |
+		 * | DirectionInputTextureNames           |     |      |        |   *   |     *     |   *    |      *      |     *     |
+		 * | gamepadButtonKeyTypeToEmojiStrMap    |     |      |  ~*~   |   *   |     *     |   *    |    XBOX     |     *     |
+		 * | stickAndDpadEmoji                    |     |      |        |   *   |     *     |   *    |      *      |     *     |
+		 * | SkinNameMap                          |  *  |      |  (*)   |   *   |  SWITCH   | SWITCH |    XBOX     |     *     |
+		 * | StartButtonText                      |     |      |        |       |  SWITCH   | SWITCH |    XBOX     |   XBOX    |
+		 * | HelpMaster                           |     |      |        |       |  SWITCH   | SWITCH |    XBOX     |    PS4    |
+		 * | HelpImageManager                     |     |      |        |       |  SWITCH   | SWITCH |    XBOX     |     *     |
+		 * | emojiStrToGamepadButtonKeyTypeStrMap |     |  *   |   *    |       |           |        |             |           |
+		 * +--------------------------------------+-----+------+--------+-------+-----------+--------+-------------+-----------+
+		 */
+
 		static readonly Dictionary<KeyType, string> steamControllerTextureNameMap = new Dictionary<KeyType, string>
 		{
 			{ KeyType.GamePad_A, "xb_button_02" },
