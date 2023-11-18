@@ -87,7 +87,7 @@ namespace GamepadSupportPlugin
 			{ "<sprite index=29>", "<sprite index=17>" },
 			{ "<sprite index=41>", "<sprite index=17>" },
 		};
-		static readonly Dictionary<KeyType, string> steamSteamControllerSkinNameMap = new Dictionary<KeyType, string>
+		static readonly Dictionary<KeyType, string> steamControllerSkinNameMap = new Dictionary<KeyType, string>
 		{
 			{ KeyType.GamePad_A, "xbox_A" },
 			{ KeyType.GamePad_B, "xbox_B" },
@@ -414,7 +414,7 @@ namespace GamepadSupportPlugin
 			{ "<sprite index=95>", "<sprite index=98>" },
 			{ "<sprite index=96>", "<sprite index=99>" },
 		};
-		static readonly Dictionary<KeyType, string> steamSteamDeckSkinNameMap = new Dictionary<KeyType, string>
+		static readonly Dictionary<KeyType, string> steamDeckSkinNameMap = new Dictionary<KeyType, string>
 		{
 			{ KeyType.GamePad_A, "switch_A" },
 			{ KeyType.GamePad_B, "switch_B" },
@@ -1441,7 +1441,7 @@ namespace GamepadSupportPlugin
 			{
 				case GamePadDeviceType.STEAM:
 					key = GameInput2.GetGamePadButtonKeyType(InputType.Decide);
-					return steamSteamControllerSkinNameMap.GetValueSafe(key) ?? "";
+					return steamControllerSkinNameMap.GetValueSafe(key) ?? "";
 
 				case SwitchProGamePadDeviceType:
 				case JoyConGamePadDeviceType:
@@ -1454,7 +1454,7 @@ namespace GamepadSupportPlugin
 
 				case SteamDeckGamePadDeviceType:
 					key = GameInput2.GetGamePadButtonKeyType(InputType.Decide);
-					return steamSteamDeckSkinNameMap.GetValueSafe(key) ?? "";
+					return steamDeckSkinNameMap.GetValueSafe(key) ?? "";
 			}
 			return __result;
 		}
