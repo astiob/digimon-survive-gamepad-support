@@ -37,17 +37,17 @@ Included libraries
 To inject my code into the game, this installation package
 includes binary forms of the following MIT-licensed software:
 
-  * BepInEx 5.4.21 (c) 2018 Bepis
-    https://github.com/BepInEx/BepInEx/tree/v5.4.21
+  * BepInEx 5.4.22 (c) 2018 - 2023 Bepis
+    https://github.com/BepInEx/BepInEx/tree/v5.4.22
 
-  * HarmonyX 2.7.0 (c) 2020 BepInEx
-    https://github.com/BepInEx/HarmonyX/tree/v2.7.0
+  * HarmonyX 2.9.0 (c) 2020 - 2022 BepInEx
+    https://github.com/BepInEx/HarmonyX/tree/v2.9.0
     based on Harmony 2 (c) 2017 Andreas Pardeike
 
-  * MonoMod 21.12.13.01 (c) 2015 - 2020 0x0ade
-    https://github.com/MonoMod/MonoMod/tree/v21.12.13.01
+  * MonoMod 22.01.29.01 (c) 2015 - 2022 0x0ade
+    https://github.com/MonoMod/MonoMod/tree/v22.01.29.01
 
-  * Cecil 0.10.4 (c) 2008 - 2015 Jb Evain, (c) 2008 - 2011 Novell, Inc.
+  * Cecil 0.10.4 (c) 2008 - 2019 Jb Evain, (c) 2008 - 2011 Novell, Inc.
     https://github.com/jbevain/cecil/tree/98ec890d44643ad88d573e97be0e120435eda732
 
 and the following CC0/public domain software:
