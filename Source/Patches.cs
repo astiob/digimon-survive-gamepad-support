@@ -525,28 +525,6 @@ namespace GamepadSupportPlugin
 			}
 		}
 
-		static string AdaptDefaultRebindableEmojiToGamePad(string text, GamePadDeviceType gamePadDeviceType)
-		{
-			switch (gamePadDeviceType.Normalize())
-			{
-				case SwitchProGamePadDeviceType: // (currently effectively a no-op)
-				case JoyConGamePadDeviceType:
-				case MobileTouchGamePadDeviceType: // (currently effectively a no-op)
-				case SteamDeckGamePadDeviceType:
-					return new Regex("<sprite index=[^>]*>").Replace(text, m =>
-					{
-						var keyType = SurvivorDefine.GetGamepadButtonKeyTypeFromEmojiStr(m.Value);
-						if (keyType == (KeyType)(-1))
-							return m.Value;
-						else
-							return SurvivorDefine.GetEmojiStrFromGamepadButtonKeyType(gamePadDeviceType, keyType);
-					});
-
-				default:
-					return text;
-			}
-		}
-
 		static int EnsureSteamControllerTextureNameMapIndex(
 			ref Dictionary<KeyType, string>[] ___gamePadTextureNameMap,
 			ref string[][][] ___directionInputTetureNames)
@@ -1467,8 +1445,14 @@ namespace GamepadSupportPlugin
 		[HarmonyPostfix]
 		static void DBHelpText_GetString_postfix(ref string __result)
 		{
-			var gamePadType = GameInput2.GetGamePadType().Normalize();
-			__result = AdaptDefaultRebindableEmojiToGamePad(AdaptStickAndDpadEmojiToGamePad(__result, gamePadType), gamePadType);
+			if (GameInput2.GetGamePadType() != GamePadDeviceType.NONE)
+			{
+				var typeofTextArea = AccessTools.Inner(typeof(TutorialUI), "TextArea");
+				var GetGamepadTutorialText = AccessTools.Method(typeofTextArea, "GetGamepadTutorialText").GetFastDelegate();
+				var textArea = Activator.CreateInstance(typeofTextArea);
+				AccessTools.Field(typeofTextArea, "tutorialStrReplaceSB").SetValue(textArea, new StringBuilder(512));
+				__result = (string)GetGamepadTutorialText(textArea, __result);
+			}
 		}
 
 		delegate GamePadDeviceType FixGamePadDeviceTypeForSprite(GamePadDeviceType gamePadType, ref string spriteName);
@@ -1658,31 +1642,39 @@ namespace GamepadSupportPlugin
 		}
 
 		/// <summary>
-		/// Hide "*For default control settings" when viewing the
-		/// "Adventure Controls" and "Battle Controls" screens
-		/// when they do reflect the current control settings.
+		/// Hide "*For default control settings" in the Help menu
+		/// when it does reflect the current control settings.
+		/// The "Adventure Controls" and "Battle Controls" screens
+		/// reflect them iff a gamepad is attached in the stock game,
+		/// and we patch DBHelpText to reflect them in all other
+		/// screens as well, similarly iff a gamepad is attached.
 		/// </summary>
-		[HarmonyPatch(typeof(MainMenuTutorialOperationInfo), "Update")]
-		[HarmonyPatch(typeof(MainMenuTutorialOperationInfo), "Init")]
-		[HarmonyPatch(typeof(MainMenuTutorialOperationInfo), "OpenAdvData")]
-		[HarmonyPatch(typeof(MainMenuTutorialOperationInfo), "OpenBtlData")]
-		[HarmonyPatch(typeof(MainMenuTutorialOperationInfo), "Close")]
+		[HarmonyPatch(typeof(MainMenuTutorial), "UpdateOpenMenuWait")]
 		[HarmonyTranspiler]
-		public static IEnumerable<CodeInstruction> MainMenuTutorialOperationInfo_transpiler(IEnumerable<CodeInstruction> instructions)
+		static IEnumerable<CodeInstruction> MainMenuTutorial_transpiler(IEnumerable<CodeInstruction> instructions)
 		{
 			foreach (var instruction in instructions)
 			{
-				if (instruction.Calls(AccessTools.Method(typeof(GameObject), "SetActive")))
+				if (instruction.Calls(AccessTools.Method(typeof(ComponentExtension), "SetGameObjectActive")))
 				{
-					yield return new CodeInstruction(OpCodes.Dup);
-					yield return new CodeInstruction(OpCodes.Ldarg_0);
-					yield return Transpilers.EmitDelegate<Action<bool, MainMenuTutorialOperationInfo>>((isActive, operationInfo) =>
-					{
-						operationInfo.transform.parent.parent.FindGameObject("ForDefaultSettingsText")?.SetActive(
-							!isActive || GameInput2.GetGamePadType() == GamePadDeviceType.NONE);
-					});
+					yield return Transpilers.EmitDelegate<Func<bool, bool>>(isActive =>
+						isActive && GameInput2.GetGamePadType() == GamePadDeviceType.NONE);
 				}
 				yield return instruction;
+			}
+		}
+
+		[HarmonyPatch(typeof(MainMenuTutorial), "ChangePadKBCheck")]
+		[HarmonyPostfix]
+		static void ChangePadKBCheck_postfix(
+			bool __result,
+			bool isResetView,
+			Component ___m_forDefaultSettingText)
+		{
+			if (__result && isResetView)
+			{
+				___m_forDefaultSettingText.SetGameObjectActive(
+					GameInput2.GetGamePadType() == GamePadDeviceType.NONE);
 			}
 		}
 	}
