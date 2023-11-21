@@ -55,7 +55,6 @@ namespace GamepadSupportPlugin
 		 * | stickAndDpadEmoji                    |     |      |        |   *   |     *     |   *    |      *      |     *     |
 		 * | SkinNameMap                          |  *  |      |  (*)   |   *   |  SWITCH   |   *    |    XBOX     |     *     |
 		 * | StartButtonText                      |     |      |        |       |  SWITCH   | SWITCH |    XBOX     |   XBOX    |
-		 * | HelpMaster                           |     |      |        |       |  SWITCH   | SWITCH |    XBOX     |    PS4    |
 		 * | HelpImageManager                     |     |      |        |       |  SWITCH   | SWITCH |    XBOX     |     *     |
 		 * | emojiStrToGamepadButtonKeyTypeStrMap |     |  *   |   *    |       |           |        |             |           |
 		 * +--------------------------------------+-----+------+--------+-------+-----------+--------+-------------+-----------+
@@ -1446,6 +1445,7 @@ namespace GamepadSupportPlugin
 			}
 		}
 
+		// Choose by START button label
 		[HarmonyPatch(typeof(HelpMaster), MethodType.Constructor)]
 		[HarmonyPostfix]
 		static void HelpMaster_construct(Dictionary<GamePadDeviceType, string> ___PadDeviceTypePFNameDic)
@@ -1453,7 +1453,7 @@ namespace GamepadSupportPlugin
 			___PadDeviceTypePFNameDic[SwitchProGamePadDeviceType] = "Switch";
 			___PadDeviceTypePFNameDic[JoyConGamePadDeviceType] = "Switch";
 			___PadDeviceTypePFNameDic[MobileTouchGamePadDeviceType] = "Xbox";
-			___PadDeviceTypePFNameDic[SteamDeckGamePadDeviceType] = "PS4";
+			___PadDeviceTypePFNameDic[SteamDeckGamePadDeviceType] = "Xbox";
 		}
 
 		[HarmonyPatch(typeof(HelpMaster), "GetPlatform")]
@@ -1496,11 +1496,12 @@ namespace GamepadSupportPlugin
 							case SteamDeckGamePadDeviceType:
 								switch (spriteName)
 								{
-									case "map_04_ps":
-									case "map_05_ps":
-										spriteName = spriteName.Replace("_ps", "_sw");
+									case "map_04_xb":
+									case "map_05_xb":
+										spriteName = spriteName.Replace("_xb", "_sw");
 										return GamePadDeviceType.SWITCH;
 									default:
+										spriteName = spriteName.Replace("_xb", "_ps");
 										return GamePadDeviceType.PS4;
 								}
 							default:
