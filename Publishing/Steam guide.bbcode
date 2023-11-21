@@ -2,7 +2,7 @@
 
 I’ve made a [url=https://gamebanana.com/mods/398211]mod[/url] that improves the game’s support for gamepads/controllers of all brands.
 
-It also hides the mouse pointer when it’s unused (even without a gamepad).
+It also hides the mouse pointer when it’s unused (even without a gamepad) and fixes one nonsensical tutorial prompt for the keyboard.
 
 Unsupported controllers now work.
 Missing prompts are added.
@@ -22,9 +22,11 @@ Specifically:
 [*]Other officially unsupported controller types and configurations should also have a better chance of working. Share your experience in the comments!
 [*]On-screen prompts never turn into white squares or persist after switching to another controller; all unrecognized inputs consistently show closest-approximation (since mod version 1.2) or default prompts instead.
 [*]Standard buttons unbound via in-game Gamepad Settings can be rebound without resorting to resetting the whole settings page to defaults.
+[*]In-game Help consistently shows current (remapped) buttons on all screens when using a gamepad (since mod version 1.3).
 [*][b]PlayStation controllers:[/b] the interaction prompt during exploration correctly shows “X” instead of “O” if you’re using the default “X” binding (or “O” instead of “X” if you genuinely have this action bound to “O”). Help pictures still show “O” though.
-[*][b]Switch controllers:[/b] tutorial instructions correctly show “A”, “B”, “X” and “Y” instead of “B”, “A”, “Y” and “X”, and on-screen prompts for stick clicks (if you’re using them) consistently show the sticks instead of SL/SR.
+[*][b]Switch controllers:[/b] tutorial instructions correctly show “A”, “B”, “X” and “Y” instead of “B”, “A”, “Y” and “X”, and on-screen prompts for stick clicks (if you’re using them) consistently show the sticks instead of SL/SR. (Since mod version 1.3:) The Switch Pro Controller’s prompts show a proper D-pad and (where possible) notchless sticks. Steam has a “Use Nintendo Button Layout” toggle, and both of its values are supported, although non-Nintendo layout shows logical A/B/X/Y prompts for the Switch Pro Controller but physical B/A/Y/X prompts for paired Joy-Cons due to [url=https://steamcommunity.com/groups/bigpicture/discussions/4/3802776070753844269/]a Steam bug[/url] that the mod works around.
 [*][b]Steam Controller:[/b] all on-screen prompts for the right trackpad show “R” instead of “RS”.
+[*][b]Keyboard:[/b] “Press X or X” tutorial message correctly shows “Press X or Esc” (since mod version 1.3).
 [*]Controllers connected via Remote Play (including Steam Link) take priority over controllers attached to the host computer (improved in mod version 1.2).
 [*]Controllers are prioritized by type:[olist]
 [*]explicitly supported controllers: Xbox, PlayStation, Steam Controller, Switch Pro Controller, paired Joy-Con;
@@ -33,8 +35,9 @@ Specifically:
 [*]single Joy-Con (because it has too few controls).
 [/olist]
 [/list]
-Joy-Con support requires Steam client’s 19 Aug 2022 update.
 Some local controllers may not be fully supported by Steam on Windows 7.
+
+Joy-Con support requires Steam client’s 19 Aug 2022 update and shows swapped A/B and X/Y until some Steam build from late 2022 or early 2023. (Consider using mod version 1.2 if you have a 2022 build.)
 
 [h1]Installing[/h1]
 

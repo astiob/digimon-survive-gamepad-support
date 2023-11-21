@@ -1,7 +1,8 @@
 Gamepad support plugin for Digimon Survive (PC/Steam)
 =====================================================
 
-This plugin improves the game's support for gamepads/controllers of all brands.
+This plugin improves the game's support for gamepads/controllers of all brands
+as well as keyboard/mouse display.
 
 Unsupported controllers now work.
 Missing prompts are added.
@@ -49,6 +50,9 @@ Specifically:
   * Standard buttons unbound via in-game Gamepad Settings can be rebound
     without resorting to resetting the whole settings page to defaults.
 
+  * In-game Help consistently shows current (remapped) buttons on all screens
+    when using a gamepad.
+
   * PlayStation controllers: the interaction prompt during exploration
     correctly shows "X" instead of "O" if you're using the default "X"
     binding (or "O" instead of "X" if you genuinely have this action bound
@@ -57,9 +61,18 @@ Specifically:
   * Switch controllers: tutorial instructions correctly show "A", "B", "X"
     and "Y" instead of "B", "A", "Y" and "X", and on-screen prompts for stick
     clicks (if you're using them) consistently show the sticks instead of SL/SR.
+    The Switch Pro Controller's prompts show a proper D-pad and (where possible)
+    notchless sticks. Steam has a "Use Nintendo Button Layout" toggle, and both
+    of its values are supported, although non-Nintendo layout shows logical
+    A/B/X/Y prompts for the Switch Pro Controller but physical B/A/Y/X prompts
+    for paired Joy-Cons due to a Steam bug that the mod works around:
+
+    https://steamcommunity.com/groups/bigpicture/discussions/4/3802776070753844269/
 
   * Steam Controller: all on-screen prompts for
     the right trackpad show "R" instead of "RS".
+
+  * Keyboard: "Press X or X" tutorial message correctly shows "Press X or Esc".
 
   * Controllers connected via Remote Play (including Steam Link) take priority
     over controllers attached to the host computer.
@@ -72,8 +85,11 @@ Specifically:
         (so that if an external controller attached, it takes over);
      4. single Joy-Con (because it has too few controls).
 
-Joy-Con support requires Steam client's 19 Aug 2022 update.
 Some local controllers may not be fully supported by Steam on Windows 7.
+
+Joy-Con support requires Steam client's 19 Aug 2022 update and shows
+swapped A/B and X/Y until some Steam build from late 2022 or early 2023.
+(Consider using mod version 1.2 if you have a 2022 build.)
 
 
 Installing
