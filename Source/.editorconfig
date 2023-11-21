@@ -1,3 +1,5 @@
 [*.cs]
 indent_style = tab
+
+[*.{config,cs}]
 end_of_line = crlf
