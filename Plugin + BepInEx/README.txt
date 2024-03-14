@@ -131,6 +131,14 @@ such as the Japanese text mod or the video cutscene fix plugin:
 just put all your BepInEx plugins in the same plugins folder.
 
 
+Updates
+-------
+
+Find the latest version at:
+  * https://gamebanana.com/mods/398211
+  * https://github.com/astiob/digimon-survive-gamepad-support
+
+
 Troubleshooting
 ---------------
 
