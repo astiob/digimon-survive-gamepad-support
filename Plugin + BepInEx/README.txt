@@ -126,9 +126,8 @@ That's it. The mod will be active whenever you launch the game.
 Combining with other mods
 -------------------------
 
-This can be combined with other mods, including other BepInEx plugins
-such as the Japanese text mod or the video cutscene fix plugin:
-just put all your BepInEx plugins in the same plugins folder.
+This can be combined with other mods, including other BepInEx plugins.
+Just put all your BepInEx plugins in the same plugins folder.
 
 
 Updates
